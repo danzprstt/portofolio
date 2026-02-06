@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Testimoni Klien</title>
+  <style>
+    :root {
+      /* Light mode default */
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --text-primary: #212529;
+      --text-secondary: #6c757d;
+      --border-color: #dee2e6;
+      --card-bg: #ffffff;
+      --accent: #495057;
+      --shadow: rgba(0, 0, 0, 0.08);
+      --header-bg: rgba(255, 255, 255, 0.9);
+      --chat-accent: #2563eb;
+    }
+
+    .dark-mode {
+      --bg-primary: #121212;
+      --bg-secondary: #1e1e1e;
+      --text-primary: #f8f9fa;
+      --text-secondary: #adb5bd;
+      --border-color: #343a40;
+      --card-bg: #252525;
+      --accent: #ced4da;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --header-bg: rgba(18, 18, 18, 0.9);
+      --chat-accent: #3b82f6;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      line-height: 1.6;
+      position: relative;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      backdrop-filter: blur(8px);
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--text-primary);
+    }
+
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-primary);
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 1.5rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--text-primary);
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--accent);
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: var(--text-primary);
+      margin-left: 1rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 4rem 2rem;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fadeInUp 0.8s forwards 0.2s;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      opacity: 0;
+      animation: fadeInUp 0.8s forwards 0.4s;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Testimonials Section */
+    .testimonials {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 1.75rem;
+    }
+
+    .carousel-container {
+      position: relative;
+      overflow: hidden;
+      padding: 2rem 0;
+    }
+
+    .carousel {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+      padding: 0 2rem;
+    }
+
+    .testimonial-card {
+      flex: 0 0 100%;
+      padding: 1.5rem;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px var(--shadow);
+      margin: 0 0.5rem;
+      opacity: 0.8;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .testimonial-card.active {
+      opacity: 1;
+    }
+
+    .testimonial-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 16px var(--shadow);
+    }
+
+    .avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      margin: 0 auto 1rem;
+    }
+
+    .client-name {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .rating {
+      color: #ffc107;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .testimonial-text {
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .status-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    .carousel-nav {
+      display: flex;
+      justify-content: center;
+      margin-top: 1.5rem;
+      gap: 0.5rem;
+    }
+
+    .carousel-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--text-secondary);
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .carousel-dot.active {
+      background: var(--accent);
+    }
+
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--card-bg);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 6px var(--shadow);
+      color: var(--text-primary);
+      font-size: 1.2rem;
+      transition: background 0.3s, color 0.3s;
+      z-index: 10;
+    }
+
+    .carousel-arrow:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    .prev {
+      left: 2rem;
+    }
+
+    .next {
+      right: 2rem;
+    }
+
+    /* Form Section */
+    .form-section {
+      padding: 3rem 2rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .form-title {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 1.75rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text-primary);
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background: var(--text-primary);
+      transform: translateY(-2px);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border-color);
+      margin-top: 2rem;
+    }
+
+    /* Chat Button */
+    .chat-button {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--chat-accent);
+      color: white;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      z-index: 1000;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .chat-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+    }
+
+    /* Chat Bubble - Smooth Animation */
+    .chat-bubble {
+      position: fixed;
+      bottom: 90px;
+      right: 2rem;
+      width: 320px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px var(--shadow);
+      z-index: 999;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .chat-bubble.show {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .chat-header {
+      padding: 1rem;
+      background: var(--chat-accent);
+      color: white;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .close-chat {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .close-chat:hover {
+      transform: rotate(90deg);
+    }
+
+    .chat-messages {
+      padding: 1rem;
+      height: 200px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      border-radius: 12px;
+      word-wrap: break-word;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: messageAppear 0.3s forwards;
+    }
+
+    @keyframes messageAppear {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .ai-message {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      align-self: flex-start;
+    }
+
+    .user-message {
+      background: var(--chat-accent);
+      color: white;
+      align-self: flex-end;
+    }
+
+    .typing-indicator {
+      align-self: flex-start;
+      background: var(--bg-secondary);
+      padding: 0.75rem;
+      border-radius: 12px;
+      margin-bottom: 0.5rem;
+      display: none;
+    }
+
+    .typing-indicator.show {
+      display: block;
+    }
+
+    .chat-input {
+      display: flex;
+      padding: 0.5rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 0.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    .chat-input button {
+      width: auto;
+      padding: 0.5rem 1rem;
+      margin-left: 0.5rem;
+      background: var(--chat-accent);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .chat-input button:hover {
+      background: var(--text-primary);
+      transform: none;
+    }
+
+    /* Responsive */
+    @media (min-width: 768px) {
+      .testimonial-card {
+        flex: 0 0 calc(50% - 1rem);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .testimonial-card {
+        flex: 0 0 calc(33.333% - 1rem);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-toggle {
+        display: block;
+      }
+
+      nav {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--header-bg);
+        backdrop-filter: blur(8px);
+        padding: 1rem;
+        display: none;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      nav.active {
+        display: flex;
+      }
+
+      nav ul {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .carousel-arrow {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+      }
+
+      .prev {
+        left: 1rem;
+      }
+
+      .next {
+        right: 1rem;
+      }
+
+      .chat-bubble {
+        width: 280px;
+        bottom: 80px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .carousel {
+        padding: 0 1rem;
+      }
+
+      .prev {
+        left: 0.5rem;
+      }
+
+      .next {
+        right: 0.5rem;
+      }
+
+      .chat-bubble {
+        width: 240px;
+        bottom: 70px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Nama Website</div>
+    <button class="nav-toggle">☰</button>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="portfolio.html">Portfolio</a></li>
+        <li><a href="#">Testimoni</a></li>
+        <li><a href="https://wa.me/6283844026828" target="_blank">Contact Me</a></li>
+      </ul>
+    </nav>
+    <button class="theme-toggle" id="themeToggle">☀️</button>
+  </header>
+
+  <section class="hero">
+    <h1>Testimoni Klien</h1>
+    <p>Pendapat klien akan terus ditambahkan seiring pengembangan website</p>
+  </section>
+
+  <section class="testimonials">
+    <h2 class="section-title">Apa Kata Mereka</h2>
+    <div class="carousel-container">
+      <button class="carousel-arrow prev" id="prevBtn">◀</button>
+      <div class="carousel" id="carousel">
+        <!-- Cards will be inserted by JS -->
+      </div>
+      <button class="carousel-arrow next" id="nextBtn">▶</button>
+      <div class="carousel-nav" id="dots"></div>
+    </div>
+  </section>
+
+  <section class="form-section">
+    <h2 class="form-title">Kirim Testimoni Anda</h2>
+    <form id="testimonialForm">
+      <div class="form-group">
+        <label for="name">Nama</label>
+        <input type="text" id="name" required />
+      </div>
+      <div class="form-group">
+        <label for="rating">Rating</label>
+        <select id="rating" required>
+          <option value="5">★★★★★</option>
+          <option value="4">★★★★☆</option>
+          <option value="3">★★★☆☆</option>
+          <option value="2">★★☆☆☆</option>
+          <option value="1">★☆☆☆☆</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="message">Pesan</label>
+        <textarea id="message" required></textarea>
+      </div>
+      <button type="submit">Kirim Testimoni</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>&copy; <span id="year"></span> Nama Website. All rights reserved.</p>
+  </footer>
+
+  <!-- Chat Button -->
+  <button class="chat-button" id="chatButton">💬</button>
+
+  <!-- Chat Bubble -->
+  <div class="chat-bubble" id="chatBubble">
+    <div class="chat-header">
+      AI Assistant
+      <button class="close-chat" id="closeChat">×</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="message ai-message">Halo! Saya AI assistant. Ada yang bisa saya bantu?</div>
+    </div>
+    <div class="typing-indicator" id="typingIndicator">
+      <div style="display: flex; gap: 4px;">
+        <div style="width: 8px; height: 8px; background: var(--text-secondary); border-radius: 50%; animation: bounce 1.5s infinite;"></div>
+        <div style="width: 8px; height: 8px; background: var(--text-secondary); border-radius: 50%; animation: bounce 1.5s infinite 0.2s;"></div>
+        <div style="width: 8px; height: 8px; background: var(--text-secondary); border-radius: 50%; animation: bounce 1.5s infinite 0.4s;"></div>
+      </div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="userInput" placeholder="Ketik pesan..." />
+      <button id="sendButton">Kirim</button>
+    </div>
+  </div>
+
+  <script>
+    // Set current year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Theme toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+
+    // Check saved theme preference or respect OS preference
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      body.classList.add('dark-mode');
+      themeToggle.textContent = '🌙';
+    } else {
+      themeToggle.textContent = '☀️';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      const isDark = body.classList.contains('dark-mode');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      themeToggle.textContent = isDark ? '🌙' : '☀️';
+    });
+
+    // Mobile menu toggle
+    const navToggle = document.querySelector('.nav-toggle');
+    const nav = document.querySelector('nav');
+
+    navToggle.addEventListener('click', () => {
+      nav.classList.toggle('active');
+    });
+
+    // Testimonial data with localStorage support
+    let testimonials = JSON.parse(localStorage.getItem('testimonials')) || [
+      {
+        initials: "AB",
+        name: "Andi Budiman",
+        rating: 5,
+        text: "Layanan yang sangat profesional dan responsif. Sangat merekomendasikan!",
+        status: "Preview"
+      },
+      {
+        initials: "SR",
+        name: "Siti Rahayu",
+        rating: 4,
+        text: "Proses pengerjaan cepat dan hasilnya memuaskan.",
+        status: "Preview"
+      },
+      {
+        initials: "DJ",
+        name: "Dewi Jaya",
+        rating: 5,
+        text: "Komunikasi yang baik dan solusi yang tepat untuk kebutuhan saya.",
+        status: "Preview"
+      }
+    ];
+
+    // Save testimonials to localStorage
+    function saveTestimonials() {
+      localStorage.setItem('testimonials', JSON.stringify(testimonials));
+    }
+
+    // Render testimonials
+    const carousel = document.getElementById('carousel');
+    const dotsContainer = document.getElementById('dots');
+
+    function getInitials(name) {
+      return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+    }
+
+    function renderTestimonials() {
+      carousel.innerHTML = '';
+      dotsContainer.innerHTML = '';
+
+      testimonials.forEach((item, index) => {
+        // Generate initials if not exists
+        if (!item.initials) {
+          item.initials = getInitials(item.name);
+        }
+        
+        const stars = '★'.repeat(item.rating) + '☆'.repeat(5 - item.rating);
+        const card = document.createElement('div');
+        card.className = 'testimonial-card';
+        if (index === 0) card.classList.add('active');
+        card.innerHTML = `
+          <div class="avatar">${item.initials}</div>
+          <div class="client-name">${item.name}</div>
+          <div class="rating">${stars}</div>
+          <p class="testimonial-text">${item.text}</p>
+          <div class="status-label">${item.status || 'Preview'}</div>
+        `;
+        carousel.appendChild(card);
+
+        const dot = document.createElement('div');
+        dot.className = 'carousel-dot';
+        if (index === 0) dot.classList.add('active');
+        dot.addEventListener('click', () => goToSlide(index));
+        dotsContainer.appendChild(dot);
+      });
+    }
+
+    renderTestimonials();
+
+    let currentIndex = 0;
+    let totalSlides = testimonials.length;
+    let cards = document.querySelectorAll('.testimonial-card');
+    let dots = document.querySelectorAll('.carousel-dot');
+
+    function updateCarousel() {
+      const offset = -currentIndex * 100;
+      carousel.style.transform = `translateX(${offset}%)`;
+
+      // Update active classes
+      cards.forEach((card, i) => {
+        card.classList.toggle('active', i === currentIndex);
+      });
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentIndex);
+      });
+    }
+
+    function goToSlide(index) {
+      currentIndex = index;
+      updateCarousel();
+      resetAutoSlide();
+    }
+
+    function nextSlide() {
+      currentIndex = (currentIndex + 1) % totalSlides;
+      updateCarousel();
+      resetAutoSlide();
+    }
+
+    function prevSlide() {
+      currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+      updateCarousel();
+      resetAutoSlide();
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', nextSlide);
+    document.getElementById('prevBtn').addEventListener('click', prevSlide);
+
+    // Auto slide
+    let autoSlideInterval;
+    function startAutoSlide() {
+      autoSlideInterval = setInterval(nextSlide, 5000);
+    }
+
+    function resetAutoSlide() {
+      clearInterval(autoSlideInterval);
+      startAutoSlide();
+    }
+
+    // Pause on hover
+    const carouselContainer = document.querySelector('.carousel-container');
+    carouselContainer.addEventListener('mouseenter', () => {
+      clearInterval(autoSlideInterval);
+    });
+    carouselContainer.addEventListener('mouseleave', () => {
+      resetAutoSlide();
+    });
+
+    startAutoSlide();
+
+    // Form submission - now actually adds testimonial
+    document.getElementById('testimonialForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('name').value;
+      const rating = parseInt(document.getElementById('rating').value);
+      const message = document.getElementById('message').value;
+      
+      const newTestimonial = {
+        name: name,
+        rating: rating,
+        text: message,
+        status: 'Preview'
+      };
+      
+      testimonials.push(newTestimonial);
+      saveTestimonials();
+      
+      // Re-render with updated data
+      totalSlides = testimonials.length;
+      renderTestimonials();
+      cards = document.querySelectorAll('.testimonial-card');
+      dots = document.querySelectorAll('.carousel-dot');
+      updateCarousel();
+      
+      // Reset form
+      document.getElementById('testimonialForm').reset();
+      
+      // Show success message
+      alert('Testimoni berhasil ditambahkan!');
+    });
+
+    // ✅ FRONTEND INTEGRATION WITH YOUR VERCEL BACKEND
+    // This function calls your /api/siputzx endpoint
+    const sessionId =
+    localStorage.getItem('chat_session') ||
+    crypto.randomUUID();
+  localStorage.setItem('chat_session', sessionId);
+
+  const chatButton = document.getElementById('chatButton');
+  const chatBubble = document.getElementById('chatBubble');
+  const closeChat = document.getElementById('closeChat');
+  const chatMessages = document.getElementById('chatMessages');
+  const userInput = document.getElementById('userInput');
+  const sendButton = document.getElementById('sendButton');
+  const typingIndicator = document.getElementById('typingIndicator');
+
+  chatButton.onclick = () => {
+    chatBubble.classList.add('show');
+    setTimeout(() => userInput.focus(), 200);
+  };
+
+  closeChat.onclick = () => {
+    chatBubble.classList.remove('show');
+  };
+
+  function addMessage(text, isUser = false) {
+    const div = document.createElement('div');
+    div.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+    div.textContent = text;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function showTyping() {
+    typingIndicator.classList.add('show');
+  }
+
+  function hideTyping() {
+    typingIndicator.classList.remove('show');
+  }
+
+  async function sendMessage() {
+    const message = userInput.value.trim();
+    if (!message) return;
+
+    addMessage(message, true);
+    userInput.value = '';
+    showTyping();
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: message,
+          sessionId: sessionId
+        })
+      });
+
+      const data = await res.json();
+      hideTyping();
+
+      addMessage(
+        data.reply || 'AI sedang sibuk, coba lagi ya 🙏'
+      );
+
+    } catch (e) {
+      hideTyping();
+      addMessage('Server error 🙏');
+    }
+  }
+
+  sendButton.onclick = sendMessage;
+  userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (
+      chatBubble.classList.contains('show') &&
+      !chatBubble.contains(e.target) &&
+      e.target !== chatButton
+    ) {
+      chatBubble.classList.remove('show');
+    }
+  });
+    // Animation for typing indicator
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>
+
