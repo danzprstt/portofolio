@@ -697,29 +697,7 @@
     });
 
     // Testimonial data with localStorage support
-    let testimonials = JSON.parse(localStorage.getItem('testimonials')) || [
-      {
-        initials: "AB",
-        name: "Andi Budiman",
-        rating: 5,
-        text: "Layanan yang sangat profesional dan responsif. Sangat merekomendasikan!",
-        status: "Preview"
-      },
-      {
-        initials: "SR",
-        name: "Siti Rahayu",
-        rating: 4,
-        text: "Proses pengerjaan cepat dan hasilnya memuaskan.",
-        status: "Preview"
-      },
-      {
-        initials: "DJ",
-        name: "Dewi Jaya",
-        rating: 5,
-        text: "Komunikasi yang baik dan solusi yang tepat untuk kebutuhan saya.",
-        status: "Preview"
-      }
-    ];
+    let testimonials = JSON.parse(localStorage.getItem('testimonials')) || [];
 
     // Save testimonials to localStorage
     function saveTestimonials() {
@@ -909,7 +887,7 @@
     showTyping();
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
