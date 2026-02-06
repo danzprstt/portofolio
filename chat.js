@@ -14,24 +14,8 @@ Kamu adalah AI Assistant website portfolio.
 Jawab dengan bahasa Indonesia yang ramah dan singkat.
 `;
 
-   /* const r = await fetch(
+   const r = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: 'user',
-              parts: [{ text: prompt + '\n\nUser: ' + message }]
-            }
-          ]
-        })
-      }
-    );*/
-    const apikey = 'AIzaSyDg-KfFz770P7Otox_AE1Yvk9mIVzyX6rQ';
-    const r = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apikey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
