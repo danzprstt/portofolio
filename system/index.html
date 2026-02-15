@@ -1,1 +1,57 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TikTok Downloader Pro</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+  <div class="nav-container">
+    <div class="logo-section">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M21 6h-7.59l3.29-3.29a1 1 0 0 0-1.41-1.41L12.59 4H11.41L8.71 1.3a1 1 0 0 0-1.41 1.41L10.59 6H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm-9 12a4 4 0 1 1 4-4 4 4 0 0 1-4 4zm4-10H8V8h8z"/>
+        </svg>
+      </div>
+      <span class="logo-text">MDWA</span>
+    </div>
 
+    <div class="menu-toggle" id="mobile-menu">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="index.html">Dashboard</a></li>
+      <li><a href="portofolio.html">Portofolio</a></li>
+      <li><a href="store.html">Store</a></li>
+      <li><a href="testimoni.html">Testimoni</a></li>
+    </ul>
+  </div>
+</nav>
+  <div class="background-blobs"></div>
+  
+  <div class="wrapper">
+    <header>
+      <h1>TT<span>DL</span></h1>
+      <p>Download TikTok Video & MP3 dengan kualitas terbaik</p>
+    </header>
+
+    <div class="input-box">
+      <input type="text" id="urlInput" placeholder="Tempel link TikTok di sini...">
+      <button onclick="getInfo()" id="btnProcess">
+        <span>Proses</span>
+      </button>
+    </div>
+
+    <div id="result" class="result">
+      </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
