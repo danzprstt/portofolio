@@ -1,45 +1,59 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MDWA - Instagram Downloader</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instagram Downloader Pro</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <h1 class="logo">MDWA <span>DL</span></h1>
-            <div class="menu-toggle" id="mobile-menu">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </div>
-            <ul class="nav-links">
-                <li><a href="index.html">TikTok</a></li>
-                <li><a href="igdl.html" class="active">Instagram</a></li>
-                <li><a href="portofolio.html">Portofolio</a></li>
-            </ul>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo-section">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M21 6h-7.59l3.29-3.29a1 1 0 0 0-1.41-1.41L12.59 4H11.41L8.71 1.3a1 1 0 0 0-1.41 1.41L10.59 6H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm-9 12a4 4 0 1 1 4-4 4 4 0 0 1-4 4zm4-10H8V8h8z"/>
+          </svg>
         </div>
-    </nav>
+        <span class="logo-text">MDWA</span>
+      </div>
 
-    <div class="container">
-        <div class="main-content">
-            <div class="icon-header">
-                <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="IG Logo" width="80">
-            </div>
-            <h1>Instagram Downloader</h1>
-            <p>Download Reels & Video Instagram dengan kualitas terbaik</p>
+      <div class="menu-toggle" id="mobile-menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
 
-            <div class="input-group">
-                <input type="text" id="urlInput" placeholder="Tempel link Instagram di sini...">
-                <button onclick="getIgInfo()" class="btn-proses">Proses</button>
-            </div>
+      <ul class="nav-links">
+        <li><a href="index.html">TikTok DL</a></li>
+        <li><a href="https://danztech.vercel.app/portofolio.html">Portofolio</a></li>
+        <li><a href="https://danztech.vercel.app/store.html">Store</a></li>
+        <li><a href="https://danztech.vercel.app/testimoni.html">Testimoni</a></li>
+        <li><a href="igdl.html" class="active">Instagram DL</a></li>
+      </ul>
+    </div>
+  </nav>
 
-            <div id="result"></div>
-        </div>
+  <div class="background-blobs"></div>
+  
+  <div class="wrapper">
+    <header>
+      <h1>IG<span>DL</span></h1>
+      <p>Download Instagram Reels & Video dengan kualitas terbaik</p>
+    </header>
+
+    <div class="input-box">
+      <input type="text" id="urlInput" placeholder="Tempel link Instagram di sini...">
+      <button onclick="getIgInfo()" id="btnProcess">
+        <span>Proses</span>
+      </button>
     </div>
 
-    <script src="script.js"></script>
+    <div id="result" class="result">
+      </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
