@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MDWA - All Web Tools</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    /* Menggunakan variabel dari style.css agar konsisten */
+    .category-tabs-wrapper {
+      margin-top: 40px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      /* Animasi muncul smooth saat halaman load */
+      animation: fadeInUp 0.8s ease forwards;
+    }
+
+    .category-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+      padding: 10px 26px;
+      border-radius: 50px; /* Bentuk Pill/Kapsul */
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .category-btn:hover {
+      color: #fff;
+      border-color: #00f2ea;
+      background: rgba(0, 242, 234, 0.05);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 242, 234, 0.1);
+    }
+
+    /* Tampilan Aktif yang Lebih Bagus & Glow */
+    .category-btn.active-category {
+      background: #00f2ea !important;
+      color: #0f172a !important; /* Teks gelap agar kontras */
+      border-color: #00f2ea !important;
+      box-shadow: 0 0 20px rgba(0, 242, 234, 0.5);
+      transform: translateY(-2px);
+    }
+
+    /* Animasi fadeInUp untuk element category */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+        filter: blur(5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+
+    /* Container Grid */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-top: 40px;
+    }
+
+    .tool-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 24px;
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0;
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-12px);
+      border-color: #00f2ea;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+</style>
+
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo-section">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M21 6h-7.59l3.29-3.29a1 1 0 0 0-1.41-1.41L12.59 4H11.41L8.71 1.3a1 1 0 0 0-1.41 1.41L10.59 6H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm-9 12a4 4 0 1 1 4-4 4 4 0 0 1-4 4zm4-10H8V8h8z"/>
+          </svg>
+        </div>
+        <span class="logo-text">MDWA</span>
+      </div>
+
+      <div class="menu-toggle" id="mobile-menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="ttdl.html">TikTok DL</a></li>
+        <li><a href="igdl.html">Instagram DL</a></li>
+        <li><a href="https://danztech.vercel.app/portofolio.html">Portofolio</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="background-blobs"></div>
+  
+  <div class="wrapper">
+    <header>
+      <h1>WEB<span> TOOLS</span></h1>
+      <p>Kumpulan tools gratis untuk produktivitas kamu</p>
+    </header>
+
+    <div style="margin-top: 30px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <button class="category-btn active-category" onclick="filterByCat('All', this)">All</button>
+        <button class="category-btn" onclick="filterByCat('Downloader', this)">Downloader</button>
+        <button class="category-btn" onclick="filterByCat('Utility', this)">Utility</button>
+    </div>
+
+    <div id="toolsGrid" class="menu-grid">
+      </div>
+  </div>
+
+  <script src="home-script.js"></script>
+</body>
+</html>
