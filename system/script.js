@@ -71,6 +71,48 @@ async function getInfo() {
   }
 }
 
+// Fungsi khusus untuk Instagram
+async function getIgInfo() {
+  const url = document.getElementById("urlInput").value;
+  const result = document.getElementById("result");
+
+  if (!url) return alert("Masukkan URL Instagram dulu!");
+
+  result.innerHTML = `<div class="loading">Sedang memproses Instagram...</div>`;
+
+  try {
+    // Memanggil route API /api/ig yang kita buat di server.js
+    const response = await fetch(`/api/ig?url=${encodeURIComponent(url)}`);
+    const data = await response.json();
+
+    if (data.error) {
+      result.innerHTML = `<p style="color: #ff4444;">${data.error}</p>`;
+      return;
+    }
+
+    result.innerHTML = `
+      <div class="card">
+        <img src="${data.thumbnail}" alt="Thumbnail" style="border-radius: 10px; max-width: 100%;">
+        <div style="margin-top: 15px; margin-bottom: 20px;">
+          <h3 style="font-size: 1rem;">Instagram Media</h3>
+          <p style="color: #888; font-size: 0.85rem;">Siap untuk diunduh</p>
+        </div>
+
+        <div class="download-options">
+          <button class="btn-dl btn-video" onclick="downloadMedia('${data.video}', 'ig_download', 'mp4')">
+            📥 Simpan ke Perangkat
+          </button>
+        </div>
+      </div>
+    `;
+
+  } catch (err) {
+    result.innerHTML = "Gagal terhubung ke server IGDL.";
+  }
+}
+
+
+
 // 3. Script untuk Hamburger Menu (Tetap Sama)
 const menu = document.querySelector('#mobile-menu');
 const menuLinks = document.querySelector('.nav-links');
