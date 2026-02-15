@@ -14,6 +14,17 @@ async function getInfo() {
       result.innerHTML = `<p style="color: #ff4444;">${data.error}</p>`;
       return;
     }
+    
+// Fungsi untuk membuat nama file acak (contoh: GhcfaNfubsf)
+function generateRandomName(length = 12) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
+
 
     // Bagian dalam function getInfo() saat menampilkan data:
 result.innerHTML = `
@@ -42,25 +53,18 @@ result.innerHTML = `
 }
 
 // Fungsi download universal agar file langsung terunduh, bukan terbuka di tab baru
-async function downloadMedia(url, filename) {
-  try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const blobUrl = window.URL.createObjectURL(blob);
-    
-    const a = document.createElement("a");
-    a.href = blobUrl;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(blobUrl);
-  } catch (error) {
-    // Fallback jika fetch blob gagal (biasanya karena CORS)
-    window.open(url, '_blank');
-  }
+function triggerDownload(fileUrl, extension) {
+    const randomName = generateRandomName(10);
+    const fullFileName = `${randomName}.${extension}`;
+
+    const link = document.createElement('a');
+    link.href = fileUrl;
+    link.target = '_blank';
+    link.download = fullFileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
-// Tambahkan ini di bagian paling bawah file script.js
 const menu = document.querySelector('#mobile-menu');
 const menuLinks = document.querySelector('.nav-links');
 
