@@ -1,3 +1,33 @@
+async function downloadMedia(fileUrl, authorName, extension) {
+  try {
+    // Memberitahu user proses download dimulai (opsional)
+    console.log("Downloading...");
+    
+    const response = await fetch(fileUrl);
+    const blob = await response.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+    
+    // Nama file jadi: nickname_tiktok.mp4 atau nickname_tiktok.mp3
+    // .replace digunakan untuk menghapus spasi/karakter aneh agar aman di sistem file
+    const safeAuthorName = authorName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const fileName = `${safeAuthorName}_tiktok.${extension}`;
+
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.download = fileName; 
+    document.body.appendChild(link);
+    link.click();
+    
+    // Bersihkan
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(blobUrl);
+  } catch (error) {
+    console.error("Gagal download via Blob, buka tab baru:", error);
+    window.open(fileUrl, '_blank');
+  }
+}
+
+// 2. Fungsi Utama Ambil Info
 async function getInfo() {
   const url = document.getElementById("urlInput").value;
   const result = document.getElementById("result");
@@ -14,74 +44,52 @@ async function getInfo() {
       result.innerHTML = `<p style="color: #ff4444;">${data.error}</p>`;
       return;
     }
-    
-// Fungsi untuk membuat nama file acak (contoh: GhcfaNfubsf)
-function generateRandomName(length = 12) {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
-}
 
+    // Tampilkan Card Hasil
+    // Perhatikan: downloadMedia sekarang mengirim data.author juga
+    result.innerHTML = `
+      <div class="card">
+        <img src="${data.thumbnail}" alt="Thumbnail">
+        <div style="margin-bottom: 20px;">
+          <h3 style="font-size: 1rem; margin-bottom: 5px;">${data.title}</h3>
+          <p style="color: #888; font-size: 0.85rem;">Oleh @${data.author}</p>
+        </div>
 
-    // Bagian dalam function getInfo() saat menampilkan data:
-result.innerHTML = `
-  <div class="card">
-    <img src="${data.thumbnail}" alt="Thumbnail">
-    <div style="margin-bottom: 20px;">
-      <h3 style="font-size: 1rem; margin-bottom: 5px;">${data.title}</h3>
-      <p style="color: #888; font-size: 0.85rem;">Oleh @${data.author}</p>
-    </div>
-
-    <div class="download-options">
-      <button class="btn-dl btn-video" onclick="downloadMedia('${data.video}', 'video.mp4')">
-        📥 Simpan Video (No WM)
-      </button>
-      <button class="btn-dl btn-music" onclick="downloadMedia('${data.music}', 'audio.mp3')">
-        🎵 Simpan Musik (MP3)
-      </button>
-    </div>
-  </div>
-`;
-;
+        <div class="download-options">
+          <button class="btn-dl btn-video" onclick="downloadMedia('${data.video}', '${data.author}', 'mp4')">
+            📥 Simpan Video (No WM)
+          </button>
+          <button class="btn-dl btn-music" onclick="downloadMedia('${data.music}', '${data.author}', 'mp3')">
+            🎵 Simpan Musik (MP3)
+          </button>
+        </div>
+      </div>
+    `;
 
   } catch (err) {
     result.innerHTML = "Terjadi kesalahan koneksi.";
   }
 }
 
-// Fungsi download universal agar file langsung terunduh, bukan terbuka di tab baru
-function triggerDownload(fileUrl, extension) {
-    const randomName = generateRandomName(10);
-    const fullFileName = `${randomName}.${extension}`;
-
-    const link = document.createElement('a');
-    link.href = fileUrl;
-    link.target = '_blank';
-    link.download = fullFileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
+// 3. Script untuk Hamburger Menu (Tetap Sama)
 const menu = document.querySelector('#mobile-menu');
 const menuLinks = document.querySelector('.nav-links');
 
-menu.addEventListener('click', function() {
-  menu.classList.toggle('is-active');
-  menuLinks.classList.toggle('active');
-  
-  // Animasi Hamburger jadi X
-  const bars = document.querySelectorAll('.bar');
-  if(menuLinks.classList.contains('active')) {
-    bars[0].style.transform = "rotate(-45deg) translate(-5px, 6px)";
-    bars[1].style.opacity = "0";
-    bars[2].style.transform = "rotate(45deg) translate(-5px, -6px)";
-  } else {
-    bars[0].style.transform = "none";
-    bars[1].style.opacity = "1";
-    bars[2].style.transform = "none";
-  }
-});
+if (menu) {
+  menu.addEventListener('click', function() {
+    menu.classList.toggle('is-active');
+    menuLinks.classList.toggle('active');
+    
+    const bars = document.querySelectorAll('.bar');
+    if(menuLinks.classList.contains('active')) {
+      bars[0].style.transform = "rotate(-45deg) translate(-5px, 6px)";
+      bars[1].style.opacity = "0";
+      bars[2].style.transform = "rotate(45deg) translate(-5px, -6px)";
+    } else {
+      bars[0].style.transform = "none";
+      bars[1].style.opacity = "1";
+      bars[2].style.transform = "none";
+    }
+  });
+}
 
