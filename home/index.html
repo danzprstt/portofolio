@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta property="og:image" content="https://files.catbox.moe/d4to5k.png">
+  <title>danzTech – Solusi Digital Modern</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="../shared.js" defer></script>
+  <style>
+    /* BG EFFECTS */
+    .bg-grid {
+      position: fixed; inset: 0; z-index: -2; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0,245,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,245,255,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .bg-orbs { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+    .orb {
+      position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.12;
+      animation: float 8s ease-in-out infinite;
+    }
+    .orb-1 { width: 600px; height: 600px; background: var(--cyan); top: -200px; left: -100px; animation-delay: 0s; }
+    .orb-2 { width: 500px; height: 500px; background: var(--purple); bottom: -150px; right: -100px; animation-delay: 3s; }
+    .orb-3 { width: 350px; height: 350px; background: var(--pink); top: 40%; left: 40%; animation-delay: 1.5s; }
+
+    canvas#particles {
+      position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: calc(var(--nav-h) + 60px) 5% 60px;
+      text-align: center; position: relative;
+    }
+    .hero-inner { max-width: 800px; margin: 0 auto; }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 20px; border: 1px solid var(--border);
+      background: rgba(0,245,255,0.06); border-radius: 50px;
+      font-size: 0.85rem; color: var(--cyan); margin-bottom: 28px;
+      font-family: var(--mono);
+    }
+    .hero-badge-dot {
+      width: 8px; height: 8px; background: var(--cyan);
+      border-radius: 50%; animation: blink 2s infinite;
+      box-shadow: 0 0 8px var(--cyan);
+    }
+
+    .hero-title {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 900; line-height: 1.05; letter-spacing: -2px;
+      margin-bottom: 24px;
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--gray); max-width: 600px; margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    .hero-btns {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 32px; border-radius: 50px;
+      font-weight: 700; font-size: 1rem; font-family: var(--font);
+      text-decoration: none; border: none; cursor: pointer;
+      transition: all 0.3s var(--ease); position: relative; overflow: hidden;
+    }
+    .btn::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);
+      transform: translateX(-100%); transition: transform 0.5s;
+    }
+    .btn:hover::after { transform: translateX(100%); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--cyan), #0080ff);
+      color: #050510; box-shadow: 0 0 30px rgba(0,245,255,0.3);
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 50px rgba(0,245,255,0.5); }
+    .btn-ghost {
+      background: transparent; color: var(--white);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); transform: translateY(-3px); }
+
+    /* Scroll hint */
+    .scroll-hint {
+      position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      color: var(--gray); font-size: 0.75rem; font-family: var(--mono);
+      animation: float 2.5s ease-in-out infinite;
+    }
+    .scroll-line {
+      width: 1px; height: 50px;
+      background: linear-gradient(var(--cyan), transparent);
+    }
+
+    /* ===== STATS ===== */
+    .stats-section {
+      padding: 80px 5%;
+    }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px; max-width: 900px; margin: 0 auto;
+    }
+    .stat-card {
+      padding: 32px 24px; text-align: center;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(12,12,32,0.8), rgba(12,12,32,0.4));
+      border: 1px solid var(--border);
+      transition: all 0.4s var(--ease);
+      position: relative; overflow: hidden;
+    }
+    .stat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      transform: scaleX(0); transition: transform 0.4s;
+    }
+    .stat-card:hover::before { transform: scaleX(1); }
+    .stat-card:hover { transform: translateY(-6px); border-color: rgba(0,245,255,0.3); }
+    .stat-num {
+      font-size: 3rem; font-weight: 900; display: block;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      font-family: var(--mono);
+    }
+    .stat-label { font-size: 0.85rem; color: var(--gray); margin-top: 8px; }
+
+    /* ===== ABOUT ===== */
+    .about-section { padding: 100px 5%; }
+    .about-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    }
+    .about-visual { position: relative; }
+    .avatar-wrap {
+      position: relative; width: 340px; height: 340px; margin: 0 auto;
+    }
+    .avatar-ring {
+      position: absolute; inset: -16px; border-radius: 40%;
+      background: conic-gradient(var(--cyan), var(--purple), var(--pink), var(--cyan));
+      animation: spin-slow 6s linear infinite; padding: 3px;
+    }
+    .avatar-ring-inner {
+      width: 100%; height: 100%; border-radius: 40%; background: var(--bg);
+    }
+    .avatar-img {
+      position: absolute; inset: 0; border-radius: 38%;
+      overflow: hidden; border: 3px solid transparent;
+    }
+    .avatar-img img { width: 100%; height: 100%; object-fit: cover; }
+    .about-float {
+      position: absolute; background: var(--glass); border: 1px solid var(--border);
+      border-radius: 12px; padding: 10px 16px; font-size: 0.8rem;
+      font-family: var(--mono); color: var(--cyan);
+      animation: float 3s ease-in-out infinite;
+    }
+    .about-float-1 { top: 10%; left: -20px; animation-delay: 0s; }
+    .about-float-2 { bottom: 15%; right: -20px; animation-delay: 1.5s; }
+    .about-float-3 { top: 55%; left: -30px; animation-delay: 0.8s; }
+
+    .section-label {
+      font-family: var(--mono); font-size: 0.75rem; letter-spacing: 3px;
+      color: var(--cyan); text-transform: uppercase; margin-bottom: 12px;
+    }
+    .section-heading {
+      font-size: clamp(2rem, 4vw, 3rem); font-weight: 800;
+      line-height: 1.1; letter-spacing: -1px; margin-bottom: 20px;
+    }
+    .about-desc { color: var(--gray); line-height: 1.8; margin-bottom: 12px; }
+
+    @media(max-width:900px){
+      .about-inner { grid-template-columns: 1fr; gap: 50px; text-align: center; }
+      .about-visual { order: -1; }
+      .avatar-wrap { width: 260px; height: 260px; }
+      .about-float { display: none; }
+    }
+
+    /* ===== HIGHLIGHTS ===== */
+    .highlights-section { padding: 100px 5%; }
+    .section-center { text-align: center; margin-bottom: 60px; }
+    .highlights-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px; max-width: 1100px; margin: 0 auto;
+    }
+    .highlight-card {
+      background: var(--glass); border: 1px solid var(--border);
+      border-radius: 20px; overflow: hidden;
+      transition: all 0.4s var(--ease); position: relative;
+      cursor: pointer;
+    }
+    .highlight-card:hover { transform: translateY(-10px); border-color: rgba(0,245,255,0.3); }
+    .highlight-card:hover .card-glow { opacity: 1; }
+    .card-glow {
+      position: absolute; inset: 0; opacity: 0; transition: opacity 0.4s;
+      background: radial-gradient(circle at 50% 0%, rgba(0,245,255,0.08), transparent 70%);
+    }
+    .card-thumb {
+      height: 160px; display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem; position: relative;
+    }
+    .card-thumb-portfolio { background: linear-gradient(135deg, rgba(0,245,255,0.15), rgba(0,245,255,0.03)); }
+    .card-thumb-store { background: linear-gradient(135deg, rgba(168,85,247,0.15), rgba(168,85,247,0.03)); }
+    .card-thumb-testimoni { background: linear-gradient(135deg, rgba(255,45,120,0.15), rgba(255,45,120,0.03)); }
+    .card-body { padding: 24px; position: relative; z-index: 1; }
+    .card-body h3 { font-size: 1.2rem; margin-bottom: 10px; }
+    .card-body p { color: var(--gray); font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; }
+    .card-link {
+      color: var(--cyan); text-decoration: none; font-weight: 600;
+      font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;
+      transition: gap 0.3s;
+    }
+    .card-link:hover { gap: 12px; }
+
+    /* ===== CTA ===== */
+    .cta-section {
+      padding: 120px 5%; text-align: center;
+      background: radial-gradient(ellipse at center, rgba(0,245,255,0.05) 0%, transparent 70%);
+    }
+    .cta-inner { max-width: 700px; margin: 0 auto; }
+    .cta-title { font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 900; letter-spacing: -1.5px; margin-bottom: 20px; }
+    .cta-sub { color: var(--gray); font-size: 1.1rem; margin-bottom: 40px; }
+    .btn-wa {
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      color: white; font-size: 1.1rem; padding: 16px 40px;
+      box-shadow: 0 0 40px rgba(37,211,102,0.3);
+    }
+    .btn-wa:hover { transform: translateY(-4px); box-shadow: 0 0 60px rgba(37,211,102,0.5); }
+
+    /* Scroll to top */
+    .scroll-top {
+      position: fixed; bottom: 28px; right: 28px;
+      width: 46px; height: 46px; border-radius: 50%;
+      background: var(--glass); border: 1px solid var(--border);
+      color: var(--cyan); font-size: 1.2rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transform: translateY(20px);
+      transition: all 0.3s var(--ease); z-index: 500;
+      backdrop-filter: blur(12px);
+    }
+    .scroll-top.show { opacity: 1; transform: translateY(0); }
+    .scroll-top:hover { background: rgba(0,245,255,0.15); }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <canvas id="particles"></canvas>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner" id="hero-inner">
+      <div class="hero-badge" id="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Available for Projects
+      </div>
+      <h1 class="hero-title" id="hero-title">
+        Solusi Kreatif untuk<br>
+        <span class="gradient-text">Bisnis Modern</span> Anda
+      </h1>
+      <p class="hero-sub" id="hero-sub">
+        Kami menggabungkan desain memukau dengan teknologi terkini untuk menciptakan
+        pengalaman digital yang tak terlupakan.
+      </p>
+      <div class="hero-btns" id="hero-btns">
+        <a href="../portofolio/index.html" class="btn btn-primary">🎨 Lihat Portofolio</a>
+        <a href="../store/index.html" class="btn btn-ghost">🛒 Kunjungi Store</a>
+        <a href="https://danz-tools.vercel.app/index.html" class="btn btn-ghost" target="_blank">⚡ Tools</a>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      scroll
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-num" data-target="7">0</span>
+        <div class="stat-label">Tahun Pengalaman</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num" data-target="285">0</span>
+        <div class="stat-label">Proyek Selesai</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num" data-target="190">0</span>
+        <div class="stat-label">Klien Puas</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num" data-target="98">0</span>
+        <div class="stat-label">% Kepuasan</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about-section">
+    <div class="about-inner">
+      <div class="about-visual">
+        <div class="avatar-wrap">
+          <div class="avatar-ring"><div class="avatar-ring-inner"></div></div>
+          <div class="avatar-img">
+            <img src="https://files.catbox.moe/co20m1.png" alt="Muhammad Dias Wildan Adam">
+          </div>
+        </div>
+        <div class="about-float about-float-1">💻 Web Dev</div>
+        <div class="about-float about-float-2">🌐 SMK TKJ</div>
+        <div class="about-float about-float-3">⚡ Open to Work</div>
+      </div>
+      <div class="about-text">
+        <div class="section-label">// Tentang Kami</div>
+        <h2 class="section-heading">Tim Kreatif yang<br><span class="gradient-text">Berdedikasi</span></h2>
+        <p class="about-desc">
+          Kami adalah tim kreatif yang menghadirkan solusi desain dan pengembangan digital
+          yang inovatif. Dengan pengalaman lebih dari 7 tahun, kami telah membantu ratusan
+          klien dari berbagai industri.
+        </p>
+        <p class="about-desc">
+          Setiap proyek kami tangani dengan pendekatan personal — memahami kebutuhan unik
+          bisnis Anda dan menerjemahkannya ke dalam solusi yang indah dan berkinerja tinggi.
+        </p>
+        <a href="../portofolio/index.html" class="btn btn-primary" style="margin-top:16px;">Lihat Karya Kami →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- HIGHLIGHTS -->
+  <section class="highlights-section">
+    <div class="section-center">
+      <div class="section-badge">// Layanan Kami</div>
+      <h2 class="section-heading">Apa yang Kami <span class="gradient-text">Tawarkan</span></h2>
+    </div>
+    <div class="highlights-grid">
+      <div class="highlight-card">
+        <div class="card-glow"></div>
+        <div class="card-thumb card-thumb-portfolio">🎨</div>
+        <div class="card-body">
+          <h3>Portofolio Unggulan</h3>
+          <p>Jelajahi karya terbaik kami yang mencerminkan komitmen terhadap kualitas dan inovasi dalam setiap proyek.</p>
+          <a href="../portofolio/index.html" class="card-link">Lihat Karya ›</a>
+        </div>
+      </div>
+      <div class="highlight-card">
+        <div class="card-glow"></div>
+        <div class="card-thumb card-thumb-store">🛒</div>
+        <div class="card-body">
+          <h3>Produk Digital</h3>
+          <p>Temukan berbagai layanan digital premium — dari edit video, bot WhatsApp, hingga pengembangan web.</p>
+          <a href="../store/index.html" class="card-link">Jelajahi Store ›</a>
+        </div>
+      </div>
+      <div class="highlight-card">
+        <div class="card-glow"></div>
+        <div class="card-thumb card-thumb-testimoni">⭐</div>
+        <div class="card-body">
+          <h3>Testimoni Klien</h3>
+          <p>Dengarkan pengalaman klien yang telah merasakan peningkatan signifikan setelah bekerja sama dengan kami.</p>
+          <a href="../testimoni/index.html" class="card-link">Baca Testimoni ›</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-inner">
+      <div class="section-badge">// Hubungi Kami</div>
+      <h2 class="cta-title">Mari Wujudkan Ide Anda <span class="gradient-text">Bersama</span></h2>
+      <p class="cta-sub">Siap mengambil langkah berikutnya? Hubungi kami sekarang dan diskusikan proyek impian Anda.</p>
+      <a href="https://wa.me/6283844026828?text=Halo%20danzTech,%20saya%20tertarik%20untuk%20berkonsultasi%20mengenai%20proyek%20saya."
+         class="btn btn-wa" target="_blank">💬 Hubungi via WhatsApp</a>
+    </div>
+  </section>
+
+  <button class="scroll-top" id="scrollTop">↑</button>
+
+  <script>
+    // === PARTICLES ===
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let W, H, pts = [];
+    function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    for (let i = 0; i < 70; i++) pts.push({
+      x: Math.random() * 9999, y: Math.random() * 9999,
+      vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
+      r: Math.random() * 1.5 + 0.3, o: Math.random() * 0.4 + 0.05
+    });
+    function tick() {
+      ctx.clearRect(0, 0, W, H);
+      pts.forEach((p, i) => {
+        p.x = ((p.x + p.vx) % W + W) % W;
+        p.y = ((p.y + p.vy) % H + H) % H;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(0,245,255,${p.o})`; ctx.fill();
+        for (let j = i+1; j < pts.length; j++) {
+          const dx = pts[j].x - p.x, dy = pts[j].y - p.y;
+          const d = Math.sqrt(dx*dx+dy*dy);
+          if (d < 110) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(0,245,255,${0.08*(1-d/110)})`;
+            ctx.lineWidth = 0.5;
+            ctx.moveTo(p.x, p.y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke();
+          }
+        }
+      });
+      requestAnimationFrame(tick);
+    }
+    tick();
+
+    // === GSAP HERO ===
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.set(['#hero-badge','#hero-title','#hero-sub','#hero-btns'], { opacity: 0, y: 40 });
+    gsap.to('#hero-badge', { opacity: 1, y: 0, duration: 0.7, delay: 0.3, ease: 'power3.out' });
+    gsap.to('#hero-title', { opacity: 1, y: 0, duration: 0.9, delay: 0.5, ease: 'power3.out' });
+    gsap.to('#hero-sub',   { opacity: 1, y: 0, duration: 0.7, delay: 0.75, ease: 'power3.out' });
+    gsap.to('#hero-btns',  { opacity: 1, y: 0, duration: 0.7, delay: 0.95, ease: 'power3.out' });
+
+    // === GSAP SCROLL REVEALS ===
+    gsap.utils.toArray('.stat-card').forEach((el, i) => {
+      gsap.from(el, {
+        scrollTrigger: { trigger: el, start: 'top 85%' },
+        opacity: 0, y: 50, duration: 0.7, delay: i * 0.1, ease: 'power3.out'
+      });
+    });
+    gsap.utils.toArray('.highlight-card').forEach((el, i) => {
+      gsap.from(el, {
+        scrollTrigger: { trigger: el, start: 'top 85%' },
+        opacity: 0, y: 60, duration: 0.8, delay: i * 0.15, ease: 'power3.out'
+      });
+    });
+    gsap.from('.about-visual', {
+      scrollTrigger: { trigger: '.about-section', start: 'top 70%' },
+      opacity: 0, x: -60, duration: 1, ease: 'power3.out'
+    });
+    gsap.from('.about-text', {
+      scrollTrigger: { trigger: '.about-section', start: 'top 70%' },
+      opacity: 0, x: 60, duration: 1, ease: 'power3.out'
+    });
+    gsap.from('.cta-inner', {
+      scrollTrigger: { trigger: '.cta-section', start: 'top 80%' },
+      opacity: 0, y: 50, duration: 0.9, ease: 'power3.out'
+    });
+
+    // === ANIME.JS COUNTER ===
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.querySelectorAll('.stat-num').forEach(el => {
+            const target = +el.dataset.target;
+            anime({ targets: el, innerHTML: [0, target], round: 1, duration: 1800,
+              easing: 'easeOutExpo',
+              update: function(a) { el.innerHTML = Math.round(a.animations[0].currentValue); }
+            });
+          });
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    io.observe(document.querySelector('.stats-section'));
+
+    // === ANIME.JS CARD HOVER ===
+    document.querySelectorAll('.highlight-card').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        anime({ targets: card.querySelector('.card-thumb'), scale: 1.1, duration: 300, easing: 'easeOutBack' });
+      });
+      card.addEventListener('mouseleave', () => {
+        anime({ targets: card.querySelector('.card-thumb'), scale: 1, duration: 300, easing: 'easeOutBack' });
+      });
+    });
+
+    // === SCROLL TOP ===
+    const st = document.getElementById('scrollTop');
+    window.addEventListener('scroll', () => st.classList.toggle('show', scrollY > 400));
+    st.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    // === PARALLAX HERO ===
+    window.addEventListener('scroll', () => {
+      const el = document.getElementById('hero-inner');
+      if (el) el.style.transform = `translateY(${scrollY * 0.25}px)`;
+    });
+  </script>
+</body>
+</html>

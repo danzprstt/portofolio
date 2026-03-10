@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta property="og:image" content="https://files.catbox.moe/d4to5k.png">
+  <title>danzTech – Portofolio</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="../shared.js" defer></script>
+  <style>
+    /* Loading */
+    .loader {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 9999; transition: opacity 0.6s, visibility 0.6s;
+    }
+    .loader.done { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loader-ring {
+      width: 64px; height: 64px; border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: var(--cyan); border-right-color: var(--purple);
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loader-text {
+      margin-top: 20px; font-family: var(--mono); font-size: 0.85rem;
+      color: var(--cyan); letter-spacing: 4px; animation: blink 1.4s infinite;
+    }
+
+    .bg-grid {
+      position: fixed; inset: 0; z-index: -2; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(168,85,247,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168,85,247,0.02) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+
+    /* PAGE HERO */
+    .page-hero {
+      padding: calc(var(--nav-h) + 80px) 5% 60px;
+      text-align: center; position: relative;
+    }
+    .page-title { font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 900; letter-spacing: -2px; margin-bottom: 16px; }
+    .page-sub { color: var(--gray); font-size: 1.1rem; max-width: 500px; margin: 0 auto; }
+
+    /* ABOUT STRIP */
+    .about-strip {
+      padding: 60px 5%;
+      display: grid; grid-template-columns: auto 1fr;
+      gap: 50px; align-items: center; max-width: 1100px; margin: 0 auto;
+    }
+    .strip-avatar {
+      width: 200px; height: 200px; border-radius: 32px; overflow: hidden;
+      border: 2px solid var(--border); position: relative; flex-shrink: 0;
+      box-shadow: 0 0 40px rgba(0,245,255,0.15);
+    }
+    .strip-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .strip-avatar-glow {
+      position: absolute; inset: -1px;
+      background: conic-gradient(var(--cyan), var(--purple), var(--pink), var(--cyan));
+      border-radius: 33px; z-index: -1; animation: spin-slow 5s linear infinite;
+    }
+    .strip-info .name { font-size: 1.8rem; font-weight: 800; margin-bottom: 6px; }
+    .strip-info .role {
+      font-family: var(--mono); font-size: 0.85rem; color: var(--cyan); margin-bottom: 16px;
+    }
+    .strip-info .bio { color: var(--gray); line-height: 1.8; margin-bottom: 20px; }
+    .strip-stats { display: flex; gap: 24px; flex-wrap: wrap; }
+    .s-stat { text-align: center; }
+    .s-num { font-size: 1.5rem; font-weight: 800; color: var(--cyan); font-family: var(--mono); }
+    .s-lbl { font-size: 0.75rem; color: var(--gray); }
+
+    @media(max-width:700px){
+      .about-strip { grid-template-columns: 1fr; text-align: center; }
+      .strip-stats { justify-content: center; }
+    }
+
+    /* SKILLS */
+    .skills-section { padding: 80px 5%; }
+    .section-center { text-align: center; margin-bottom: 50px; }
+    .section-heading { font-size: clamp(1.8rem,4vw,3rem); font-weight: 800; letter-spacing: -1px; }
+    .skills-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px; max-width: 1100px; margin: 0 auto;
+    }
+    .skill-card {
+      background: var(--glass); border: 1px solid var(--border);
+      border-radius: 16px; padding: 24px; cursor: pointer;
+      transition: all 0.3s var(--ease); position: relative; overflow: hidden;
+    }
+    .skill-card:hover { border-color: rgba(0,245,255,0.3); transform: translateY(-6px); }
+    .skill-card::before {
+      content: ''; position: absolute; top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(0,245,255,0.05) 0%, transparent 70%);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .skill-card:hover::before { opacity: 1; }
+    .skill-head { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .skill-ico {
+      width: 46px; height: 46px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .skill-name { font-size: 1.05rem; font-weight: 700; }
+    .skill-lvl { font-size: 0.8rem; color: var(--gray); margin-top: 2px; }
+    .skill-bar-wrap { height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+    .skill-bar-fill {
+      height: 100%; border-radius: 3px;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      width: 0; transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+      position: relative;
+    }
+    .skill-bar-fill::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+    @keyframes shimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+
+    /* PROJECTS */
+    .projects-section { padding: 80px 5%; }
+    .projects-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px; max-width: 1100px; margin: 0 auto;
+    }
+    .project-card {
+      background: var(--glass); border: 1px solid var(--border);
+      border-radius: 20px; overflow: hidden;
+      transition: all 0.4s var(--ease); position: relative;
+    }
+    .project-card:hover { transform: translateY(-10px) scale(1.01); border-color: rgba(0,245,255,0.3); box-shadow: 0 30px 60px rgba(0,0,0,0.3); }
+    .project-thumb {
+      height: 180px;
+      background: linear-gradient(135deg, var(--bg2), rgba(0,245,255,0.05));
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem;
+    }
+    .project-thumb::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(0,245,255,0.15), rgba(168,85,247,0.15));
+      opacity: 0; transition: opacity 0.4s;
+    }
+    .project-card:hover .project-thumb::after { opacity: 1; }
+    .project-body { padding: 22px; }
+    .project-tag {
+      display: inline-block; padding: 3px 12px;
+      background: rgba(0,245,255,0.08); border: 1px solid rgba(0,245,255,0.2);
+      border-radius: 50px; font-size: 0.73rem; color: var(--cyan);
+      font-family: var(--mono); margin-bottom: 10px;
+    }
+    .project-body h3 { font-size: 1.1rem; margin-bottom: 8px; }
+    .project-body p { color: var(--gray); font-size: 0.9rem; line-height: 1.6; margin-bottom: 16px; }
+    .tech-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tech { padding: 3px 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 20px; font-size: 0.75rem; color: var(--gray); }
+
+    /* HUB */
+    .hub-section { padding: 80px 5%; }
+    .hub-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px; max-width: 1100px; margin: 0 auto;
+    }
+    .hub-card {
+      background: var(--glass); border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px; text-align: center;
+      text-decoration: none; color: var(--white); cursor: pointer;
+      transition: all 0.3s var(--ease); position: relative; overflow: hidden;
+    }
+    .hub-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      transform: scaleX(0); transition: transform 0.3s;
+    }
+    .hub-card:hover::before { transform: scaleX(1); }
+    .hub-card:hover { transform: translateY(-5px); border-color: rgba(0,245,255,0.3); }
+    .hub-ico {
+      width: 54px; height: 54px; border-radius: 14px; margin: 0 auto 14px;
+      background: linear-gradient(135deg, rgba(0,245,255,0.2), rgba(168,85,247,0.2));
+      display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+      transition: transform 0.3s;
+    }
+    .hub-card:hover .hub-ico { transform: scale(1.1) rotate(5deg); }
+    .hub-card h3 { font-size: 1rem; margin-bottom: 6px; }
+    .hub-card p { font-size: 0.82rem; color: var(--gray); }
+
+    /* CONTACT */
+    .contact-section { padding: 80px 5%; text-align: center; }
+    .contact-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 36px; }
+    .contact-link {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 12px 24px; background: var(--glass); border: 1px solid var(--border);
+      border-radius: 50px; color: var(--white); text-decoration: none;
+      font-size: 0.9rem; font-weight: 500; transition: all 0.3s var(--ease);
+    }
+    .contact-link:hover { border-color: var(--cyan); color: var(--cyan); transform: translateY(-3px); }
+
+    /* Music Player */
+    .music-player {
+      position: fixed; bottom: 24px; left: 24px;
+      background: var(--glass); backdrop-filter: blur(20px);
+      border: 1px solid var(--border); border-radius: 18px;
+      padding: 14px 18px; display: flex; align-items: center; gap: 14px;
+      z-index: 400; max-width: 280px; transition: all 0.3s var(--ease);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    }
+    .music-player:hover { transform: translateY(-4px); border-color: rgba(0,245,255,0.3); }
+    .music-cover { width: 44px; height: 44px; border-radius: 10px; overflow: hidden; flex-shrink: 0; }
+    .music-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .music-meta { flex: 1; min-width: 0; }
+    .music-title { font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .music-artist { font-size: 0.75rem; color: var(--gray); }
+    .play-btn {
+      width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      color: var(--bg); font-size: 0.9rem; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: transform 0.2s;
+    }
+    .play-btn:hover { transform: scale(1.1); }
+    .play-btn.playing { animation: pulse-ring 1.5s infinite; }
+    @keyframes pulse-ring { 0%,100%{box-shadow:0 0 0 0 rgba(0,245,255,0.4);}50%{box-shadow:0 0 0 8px rgba(0,245,255,0);} }
+
+    /* Modal */
+    .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(8px); z-index:2000; align-items:center; justify-content:center; }
+    .modal-bg.open { display:flex; }
+    .modal-box { background:var(--bg2); border:1px solid var(--border); border-radius:20px; padding:36px; max-width:480px; width:90%; text-align:center; }
+    .modal-box h3 { font-size:1.4rem; margin-bottom:12px; }
+    .modal-box p { color:var(--gray); line-height:1.7; margin-bottom:20px; }
+    .modal-close { padding:10px 28px; background:linear-gradient(135deg,var(--cyan),var(--purple)); border:none; border-radius:50px; color:var(--bg); font-weight:700; cursor:pointer; transition:transform 0.2s; }
+    .modal-close:hover { transform:scale(1.05); }
+
+    /* Toast */
+    .toast { position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0; background:var(--glass); border:1px solid var(--border); padding:10px 24px; border-radius:50px; font-size:0.85rem; z-index:3000; transition:all 0.3s; pointer-events:none; backdrop-filter:blur(12px); }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <!-- Loader -->
+  <div class="loader" id="loader">
+    <div class="loader-ring"></div>
+    <div class="loader-text">LOADING PORTFOLIO</div>
+  </div>
+
+  <div class="bg-grid"></div>
+
+  <!-- HERO -->
+  <section class="page-hero">
+    <div class="section-badge">// Portofolio</div>
+    <h1 class="page-title"><span class="gradient-text">MDWA</span> Portfolio</h1>
+    <p class="page-sub">Muhammad Dias Wildan Adam — Web Developer & Network Enthusiast dari SMK KBM 1</p>
+  </section>
+
+  <!-- ABOUT STRIP -->
+  <div class="about-strip">
+    <div style="position:relative;width:200px;height:200px;flex-shrink:0;">
+      <div class="strip-avatar-glow" style="position:absolute;inset:-2px;border-radius:33px;"></div>
+      <div class="strip-avatar">
+        <img src="https://files.catbox.moe/co20m1.png" alt="MDWA">
+      </div>
+    </div>
+    <div class="strip-info">
+      <div class="name">Muhammad Dias Wildan Adam</div>
+      <div class="role">// TKJ Student · Web Dev · Network Enthusiast</div>
+      <p class="bio">
+        Siswa SMK KBM 1 kelas X TKJ 4 yang passionate dalam pengembangan web dan teknologi jaringan.
+        Terus belajar dan mengembangkan skill dalam HTML, CSS, JavaScript, Python, dan Cisco Networking.
+      </p>
+      <div class="strip-stats">
+        <div class="s-stat"><div class="s-num" data-target="2">0</div><div class="s-lbl">Tahun</div></div>
+        <div class="s-stat"><div class="s-num" data-target="10">0</div><div class="s-lbl">Proyek</div></div>
+        <div class="s-stat"><div class="s-num" data-target="5">0</div><div class="s-lbl">Sertifikat</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILLS -->
+  <section class="skills-section">
+    <div class="section-center">
+      <div class="section-badge">// Skills & Tools</div>
+      <h2 class="section-heading">Kemampuan yang <span class="gradient-text">Saya Kuasai</span></h2>
+    </div>
+    <div class="skills-grid" id="skills-grid">
+      <div class="skill-card" onclick="showModal('HTML5','Markup language utama untuk struktur web modern. Advanced — 85%')">
+        <div class="skill-head"><div class="skill-ico">🌐</div><div><div class="skill-name">HTML5</div><div class="skill-lvl">Advanced</div></div></div>
+        <div class="skill-bar-wrap"><div class="skill-bar-fill" data-w="85"></div></div>
+      </div>
+      <div class="skill-card" onclick="showModal('CSS3','Styling modern dengan Flexbox, Grid, Animasi, dan Responsive Design. Intermediate — 75%')">
+        <div class="skill-head"><div class="skill-ico">🎨</div><div><div class="skill-name">CSS3</div><div class="skill-lvl">Intermediate</div></div></div>
+        <div class="skill-bar-wrap"><div class="skill-bar-fill" data-w="75"></div></div>
+      </div>
+      <div class="skill-card" onclick="showModal('JavaScript','ES6+, DOM Manipulation, Async, dan Modern Libraries. Intermediate — 70%')">
+        <div class="skill-head"><div class="skill-ico">⚡</div><div><div class="skill-name">JavaScript</div><div class="skill-lvl">Intermediate</div></div></div>
+        <div class="skill-bar-wrap"><div class="skill-bar-fill" data-w="70"></div></div>
+      </div>
+      <div class="skill-card" onclick="showModal('Python','Scripting, Automation, dan Backend Development. Beginner — 45%')">
+        <div class="skill-head"><div class="skill-ico">🐍</div><div><div class="skill-name">Python</div><div class="skill-lvl">Beginner</div></div></div>
+        <div class="skill-bar-wrap"><div class="skill-bar-fill" data-w="45"></div></div>
+      </div>
+      <div class="skill-card" onclick="showModal('Networking','TCP/IP, Subnetting, VLAN, dan Network Troubleshooting. Beginner — 40%')">
+        <div class="skill-head"><div class="skill-ico">🔌</div><div><div class="skill-name">Networking</div><div class="skill-lvl">Beginner</div></div></div>
+        <div class="skill-bar-wrap"><div class="skill-bar-fill" data-w="40"></div></div>
+      </div>
+      <div class="skill-card" onclick="showModal('Cisco Packet Tracer','Simulasi jaringan enterprise dengan routing, switching, dan security. Intermediate — 60%')">
+        <div class="skill-head"><div class="skill-ico">📡</div><div><div class="skill-name">Cisco Packet Tracer</div><div class="skill-lvl">Intermediate</div></div></div>
+        <div class="skill-bar-wrap"><div class="skill-bar-fill" data-w="60"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="projects-section">
+    <div class="section-center">
+      <div class="section-badge">// Featured Projects</div>
+      <h2 class="section-heading">Karya yang Telah <span class="gradient-text">Saya Buat</span></h2>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card">
+        <div class="project-thumb">🌐</div>
+        <div class="project-body">
+          <span class="project-tag">Web Development</span>
+          <h3>Portfolio Website</h3>
+          <p>Website portofolio pribadi dengan desain modern, animasi smooth, dan fully responsive.</p>
+          <div class="tech-list">
+            <span class="tech">HTML5</span><span class="tech">CSS3</span><span class="tech">JavaScript</span><span class="tech">Anime.js</span>
+          </div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-thumb">📚</div>
+        <div class="project-body">
+          <span class="project-tag">In Development</span>
+          <h3>Smart School Platform</h3>
+          <p>Platform pembelajaran interaktif untuk siswa SMK TKJ dengan fitur e-learning lengkap.</p>
+          <div class="tech-list">
+            <span class="tech">HTML</span><span class="tech">CSS</span><span class="tech">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-thumb">🔌</div>
+        <div class="project-body">
+          <span class="project-tag">Networking</span>
+          <h3>Network Simulation</h3>
+          <p>Topologi jaringan enterprise mulai dari simulasi hingga implementasi real-life.</p>
+          <div class="tech-list">
+            <span class="tech">Cisco PT</span><span class="tech">Subnetting</span><span class="tech">VLAN</span>
+          </div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-thumb">🤖</div>
+        <div class="project-body">
+          <span class="project-tag">Automation</span>
+          <h3>Network Automation</h3>
+          <p>Script Python untuk otomatisasi konfigurasi dan monitoring jaringan enterprise.</p>
+          <div class="tech-list">
+            <span class="tech">Python</span><span class="tech">Netmiko</span><span class="tech">Paramiko</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HUB / SCHOOL RESOURCES -->
+  <section class="hub-section">
+    <div class="section-center">
+      <div class="section-badge">// School Resources</div>
+      <h2 class="section-heading">Portal <span class="gradient-text">Sekolah</span></h2>
+    </div>
+    <div class="hub-grid">
+      <a href="http://103.142.203.226:8081/" target="_blank" class="hub-card">
+        <div class="hub-ico">🎓</div>
+        <h3>Portal TKJ</h3>
+        <p>Akses portal pembelajaran jurusan TKJ</p>
+      </a>
+      <a href="https://smk.kbm1.sch.id/" target="_blank" class="hub-card">
+        <div class="hub-ico">🏫</div>
+        <h3>Web School</h3>
+        <p>Website resmi SMK KBM 1</p>
+      </a>
+      <div class="hub-card" onclick="showToast('Website kelas X TKJ 4 sedang dalam pengembangan 🚧')">
+        <div class="hub-ico">👨‍💻</div>
+        <h3>Web X TKJ 4</h3>
+        <p>Website kelas X TKJ 4 (Coming Soon)</p>
+      </div>
+      <div class="hub-card" onclick="showToast('Contact Page segera hadir! ✨')">
+        <div class="hub-ico">📇</div>
+        <h3>Contact Page</h3>
+        <p>Halaman kontak detail (Coming Soon)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact-section">
+    <div class="section-badge">// Get In Touch</div>
+    <h2 class="section-heading" style="font-size:clamp(1.8rem,4vw,3rem);font-weight:800;letter-spacing:-1px;margin-top:12px;">
+      Ayo <span class="gradient-text">Berkolaborasi!</span>
+    </h2>
+    <div class="contact-links">
+      <a href="https://mail.google.com/mail/u/0/?view=cm&to=sadamdias29@gmail.com" target="_blank" class="contact-link">📧 Email</a>
+      <a href="https://github.com/danzprstt" target="_blank" class="contact-link">💻 GitHub</a>
+      <a href="https://wa.me/6283844026828?text=Halo,%20saya%20tertarik%20dengan%20portfoliomu!" target="_blank" class="contact-link">💬 WhatsApp</a>
+      <a href="https://t.me/danzinc" target="_blank" class="contact-link">✈️ Telegram</a>
+      <a href="https://www.instagram.com/xdnnzy._" target="_blank" class="contact-link">📸 Instagram</a>
+    </div>
+  </section>
+
+  <!-- MUSIC PLAYER -->
+  <div class="music-player">
+    <div class="music-cover"><img src="https://files.catbox.moe/eq7z31.jpg" alt="Cover"></div>
+    <div class="music-meta">
+      <div class="music-title">Critical Mistake</div>
+      <div class="music-artist">Neck Deep</div>
+    </div>
+    <button class="play-btn" id="play-btn" onclick="toggleMusic()">▶</button>
+    <audio id="bg-music" loop><source src="https://files.catbox.moe/ybigpv.mp3" type="audio/mpeg"></audio>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-bg" id="modal-bg" onclick="closeModal(event)">
+    <div class="modal-box">
+      <div style="font-size:2rem;margin-bottom:12px;">💡</div>
+      <h3 id="modal-title">Skill Detail</h3>
+      <p id="modal-desc">Detail</p>
+      <button class="modal-close" onclick="document.getElementById('modal-bg').classList.remove('open')">Tutup</button>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Loader
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('loader').classList.add('done');
+        runEntrance();
+      }, 1200);
+    });
+
+    function runEntrance() {
+      gsap.from('.page-hero .section-badge', { opacity:0, y:30, duration:0.6, ease:'power3.out' });
+      gsap.from('.page-title', { opacity:0, y:40, duration:0.8, delay:0.1, ease:'power3.out' });
+      gsap.from('.page-sub', { opacity:0, y:30, duration:0.7, delay:0.25, ease:'power3.out' });
+      gsap.from('.about-strip', { opacity:0, y:50, duration:0.9, delay:0.4, ease:'power3.out' });
+    }
+
+    // Skill bars (GSAP ScrollTrigger + anime.js)
+    const skillObserver = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.querySelectorAll('.skill-bar-fill').forEach(bar => {
+            anime({ targets: bar, width: bar.dataset.w + '%', duration: 1300, delay: anime.stagger(80), easing: 'easeOutQuart' });
+          });
+          skillObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    skillObserver.observe(document.getElementById('skills-grid'));
+
+    // Project cards
+    gsap.utils.toArray('.project-card').forEach((el, i) => {
+      gsap.from(el, {
+        scrollTrigger: { trigger: el, start: 'top 88%' },
+        opacity: 0, y: 50, duration: 0.7, delay: i * 0.12, ease: 'power3.out'
+      });
+    });
+
+    // Hub cards
+    gsap.utils.toArray('.hub-card').forEach((el, i) => {
+      gsap.from(el, {
+        scrollTrigger: { trigger: el, start: 'top 88%' },
+        opacity: 0, scale: 0.9, duration: 0.6, delay: i * 0.1, ease: 'back.out(1.5)'
+      });
+    });
+
+    // Counter (anime.js)
+    const cio = new IntersectionObserver(e => {
+      e.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.querySelectorAll('[data-target]').forEach(el => {
+            const t = +el.dataset.target;
+            anime({ targets: el, innerHTML: [0, t], round: 1, duration: 1500, easing: 'easeOutExpo',
+              update: a => { el.innerHTML = Math.round(a.animations[0].currentValue) + '+'; }
+            });
+          });
+          cio.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    cio.observe(document.querySelector('.about-strip'));
+
+    // Skill card hover
+    document.querySelectorAll('.skill-card').forEach(c => {
+      c.addEventListener('mouseenter', () => anime({ targets: c.querySelector('.skill-ico'), rotate: [0, 5], scale: [1, 1.1], duration: 300, easing: 'easeOutBack' }));
+      c.addEventListener('mouseleave', () => anime({ targets: c.querySelector('.skill-ico'), rotate: 0, scale: 1, duration: 300, easing: 'easeOutBack' }));
+    });
+
+    // Skill modal
+    function showModal(title, desc) {
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-desc').textContent = desc;
+      document.getElementById('modal-bg').classList.add('open');
+      anime({ targets: '.modal-box', scale: [0.8, 1], opacity: [0, 1], duration: 400, easing: 'easeOutBack' });
+    }
+    function closeModal(e) { if (e.target === document.getElementById('modal-bg')) document.getElementById('modal-bg').classList.remove('open'); }
+
+    // Toast
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    // Music
+    const audio = document.getElementById('bg-music');
+    const btn = document.getElementById('play-btn');
+    let playing = false;
+    function toggleMusic() {
+      playing ? audio.pause() : audio.play().catch(()=>{});
+      playing = !playing;
+      btn.textContent = playing ? '⏸' : '▶';
+      btn.classList.toggle('playing', playing);
+    }
+
+    // Typewriter for page-sub
+    const sub = document.querySelector('.page-sub');
+    const texts = ['Web Developer & Network Enthusiast', 'SMK KBM 1 · Kelas X TKJ 4', 'Open to Collaborations 🚀'];
+    let ti = 0, ci = 0, del = false;
+    function type() {
+      const cur = texts[ti];
+      if (del) { sub.textContent = cur.slice(0, --ci); }
+      else { sub.textContent = cur.slice(0, ++ci); }
+      let sp = del ? 40 : 80;
+      if (!del && ci === cur.length) { sp = 2200; del = true; }
+      else if (del && ci === 0) { del = false; ti = (ti+1)%texts.length; sp = 400; }
+      setTimeout(type, sp);
+    }
+    setTimeout(type, 1500);
+  </script>
+</body>
+</html>
