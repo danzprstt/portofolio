@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta property="og:title" content="danzTech - Store">
+  <meta property="og:description" content="Selamat datang di Store resmi danzTech. Lihat produk produk selengkapnya di sini.">
+  <meta property="og:image" content="https://files.catbox.moe/d4to5k.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://danztech.vercel.app/testimoni/index.html">
+  <title>danzTech &ndash; Testimoni</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.3/dist/floating-ui.dom.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="../shared.js" defer></script>
+  <style>
+    .bg-grid{position:fixed;inset:0;z-index:-2;pointer-events:none;background-image:linear-gradient(rgba(255,45,120,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,45,120,.018) 1px,transparent 1px);background-size:55px 55px;}
+    .bg-glow{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 10% 20%,rgba(255,45,120,.07) 0%,transparent 50%),radial-gradient(ellipse at 90% 80%,rgba(0,245,255,.06) 0%,transparent 50%);}
+
+    .page-hero{padding:calc(var(--nav-h)+80px) 5% 48px;text-align:center;}
+    .page-title{font-size:clamp(2.5rem,6vw,5rem);font-weight:900;letter-spacing:-2px;margin-bottom:14px;}
+    .page-sub{color:var(--gray);font-size:1rem;max-width:520px;margin:0 auto 24px;}
+    .rating-display{display:flex;align-items:center;justify-content:center;gap:6px;color:var(--yellow);}
+    .rating-display span{font-family:var(--mono);font-size:.82rem;color:var(--gray);margin-left:4px;}
+
+    .stats-bar{display:flex;justify-content:center;gap:44px;flex-wrap:wrap;padding:0 5% 56px;max-width:900px;margin:0 auto;}
+    .sbar-item{text-align:center;cursor:pointer;transition:transform .2s;}
+    .sbar-item:hover{transform:translateY(-3px);}
+    .sbar-ico{color:var(--pink);margin-bottom:8px;}
+    .sbar-num{font-size:2.6rem;font-weight:900;font-family:var(--mono);color:var(--pink);}
+    .sbar-lbl{font-size:.78rem;color:var(--gray);margin-top:4px;}
+
+    .featured-section{padding:0 5% 20px;}
+    .featured-card{max-width:680px;margin:0 auto;background:linear-gradient(135deg,rgba(255,45,120,.06),rgba(168,85,247,.06));border:1px solid rgba(255,45,120,.18);border-radius:22px;padding:38px;text-align:center;cursor:pointer;transition:all .3s var(--ease);}
+    .featured-card:hover{transform:translateY(-5px);border-color:rgba(255,45,120,.38);}
+    .quote-icon{color:rgba(255,45,120,.35);margin-bottom:14px;transition:color .3s;}
+    .featured-card:hover .quote-icon{color:rgba(255,45,120,.7);}
+    .featured-text{color:var(--white);line-height:1.85;font-size:1.02rem;font-style:italic;margin-bottom:22px;}
+    .t-footer{display:flex;align-items:center;gap:13px;justify-content:center;}
+    .t-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:800;flex-shrink:0;border:2px solid rgba(255,45,120,.28);}
+    .t-name{font-weight:700;font-size:.92rem;text-align:left;}
+    .t-role{font-size:.74rem;color:var(--gray);margin-top:2px;}
+    .t-stars{display:flex;gap:2px;color:var(--yellow);margin-top:4px;}
+
+    .testi-section{padding:28px 5% 56px;}
+    .testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px;max-width:1100px;margin:0 auto;}
+    .testi-card{border-radius:20px;padding:24px;cursor:pointer;transition:all .4s var(--ease);position:relative;}
+    .testi-card:hover{transform:translateY(-7px);}
+    .t-tag{position:absolute;top:16px;right:16px;padding:2px 9px;border-radius:50px;background:rgba(255,45,120,.09);border:1px solid rgba(255,45,120,.18);font-size:.66rem;color:var(--pink);font-family:var(--mono);}
+    .t-quote-ico{color:rgba(255,45,120,.28);margin-bottom:10px;transition:color .3s;}
+    .testi-card:hover .t-quote-ico{color:rgba(255,45,120,.65);}
+    .t-text{color:var(--white);line-height:1.72;margin-bottom:20px;font-size:.9rem;}
+    .t-footer-mini{display:flex;align-items:center;gap:11px;}
+
+    .review-form{max-width:580px;margin:0 auto;padding:0 5% 56px;}
+    .review-form-inner{background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:30px;}
+    .review-form-inner h3{font-size:1.15rem;margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+    .form-group{margin-bottom:14px;}
+    .form-label{display:block;font-size:.76rem;color:var(--gray);margin-bottom:6px;font-family:var(--mono);}
+    .star-picker{display:flex;gap:7px;margin-bottom:4px;}
+    .star-picker button{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.18);transition:transform .2s,color .2s;padding:0;}
+    .star-picker button.active,.star-picker button:hover{color:var(--yellow);transform:scale(1.22);}
+    textarea.uiv-input{border-radius:14px;resize:vertical;min-height:90px;}
+
+    .rating-section{padding:0 5% 72px;}
+    .rating-wrap{max-width:560px;margin:0 auto;}
+    .rating-big{text-align:center;margin-bottom:36px;}
+    .rating-num-big{font-size:4.8rem;font-weight:900;color:var(--yellow);font-family:var(--mono);line-height:1;}
+    .rating-stars-big{display:flex;justify-content:center;gap:4px;color:var(--yellow);margin:8px 0;}
+    .rating-count{color:var(--gray);font-size:.86rem;}
+    .rbar-row{display:grid;grid-template-columns:50px 1fr 38px;gap:10px;align-items:center;margin-bottom:9px;}
+    .rbar-label{font-size:.8rem;color:var(--gray);text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:4px;}
+    .rbar-track{height:7px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden;}
+    .rbar-fill{height:100%;background:linear-gradient(90deg,var(--yellow),var(--pink));border-radius:4px;width:0;}
+    .rbar-pct{font-size:.76rem;color:var(--gray);font-family:var(--mono);}
+
+    .cta-strip{margin:0 5% 80px;background:linear-gradient(135deg,rgba(255,45,120,.05),rgba(0,245,255,.05));border:1px solid var(--border);border-radius:22px;padding:56px;text-align:center;max-width:1100px;margin-left:auto;margin-right:auto;}
+    .cta-strip h2{font-size:clamp(1.8rem,4vw,2.7rem);font-weight:800;letter-spacing:-1px;margin-bottom:14px;}
+    .cta-strip p{color:var(--gray);margin-bottom:26px;line-height:1.8;}
+    .cta-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <section class="page-hero">
+    <div class="section-badge">// Testimoni</div>
+    <h1 class="page-title">Kata <span class="gradient-text">Klien Kami</span></h1>
+    <p class="page-sub">Kepuasan klien adalah prioritas utama kami.</p>
+    <div class="rating-display">
+      <i data-lucide="star" width="18" height="18" style="fill:var(--yellow);stroke:none;"></i>
+      <i data-lucide="star" width="18" height="18" style="fill:var(--yellow);stroke:none;"></i>
+      <i data-lucide="star" width="18" height="18" style="fill:var(--yellow);stroke:none;"></i>
+      <i data-lucide="star" width="18" height="18" style="fill:var(--yellow);stroke:none;"></i>
+      <i data-lucide="star" width="18" height="18" style="fill:var(--yellow);stroke:none;"></i>
+      <span>4.9 / 5.0 &middot; 11+ Klien Puas</span>
+    </div>
+  </section>
+
+  <div class="stats-bar" id="stats-bar">
+    <div class="sbar-item" onclick="showStatInfo('Total Klien','Lebih dari 11 klien dari berbagai bidang telah menggunakan layanan kami.')">
+      <div class="sbar-ico"><i data-lucide="users" width="22" height="22"></i></div>
+      <div class="sbar-num" data-target="11">0</div><div class="sbar-lbl">Total Klien</div>
+    </div>
+    <div class="sbar-item" onclick="showStatInfo('Rating','Rating rata-rata 4.9 dari 5.0 berdasarkan lebih dari 190 ulasan.')">
+      <div class="sbar-ico"><i data-lucide="star" width="22" height="22"></i></div>
+      <div class="sbar-num" style="-webkit-text-fill-color:var(--pink);">4.9</div><div class="sbar-lbl">Rating</div>
+    </div>
+    <div class="sbar-item" onclick="showStatInfo('Kepuasan','98% klien menyatakan puas dan bersedia merekomendasikan layanan kami.')">
+      <div class="sbar-ico"><i data-lucide="trending-up" width="22" height="22"></i></div>
+      <div class="sbar-num" data-target="98">0</div><div class="sbar-lbl">% Kepuasan</div>
+    </div>
+    <div class="sbar-item" onclick="showStatInfo('Proyek','25+ proyek telah berhasil diselesaikan dengan kualitas premium.')">
+      <div class="sbar-ico"><i data-lucide="folder-check" width="22" height="22"></i></div>
+      <div class="sbar-num" data-target="25">0</div><div class="sbar-lbl">Proyek</div>
+    </div>
+  </div>
+
+  <div class="featured-section">
+    <div class="featured-card" onclick="showFull('anonim','private, Startup Digital','Hasil kerja MDWA TECH benar-benar melebihi ekspektasi saya. Desainnya fresh, animasinya smooth, dan responsnya cepat. Sangat puas!')">
+      <div class="quote-icon"><i data-lucide="quote" width="36" height="36"></i></div>
+      <p class="featured-text">Hasil kerja MDWA TECH benar-benar melebihi ekspektasi saya. Desainnya fresh, animasinya smooth, dan responsnya cepat. Sangat puas!</p>
+      <div class="t-footer">
+        <div class="t-avatar" style="background:linear-gradient(135deg,var(--pink),var(--purple));">R</div>
+        <div>
+          <div class="t-name">anonim</div>
+          <div class="t-role">Private, Startup Digital</div>
+          <div class="t-stars">
+            <i data-lucide="star" width="13" height="13" style="fill:var(--yellow);stroke:none;"></i>
+            <i data-lucide="star" width="13" height="13" style="fill:var(--yellow);stroke:none;"></i>
+            <i data-lucide="star" width="13" height="13" style="fill:var(--yellow);stroke:none;"></i>
+            <i data-lucide="star" width="13" height="13" style="fill:var(--yellow);stroke:none;"></i>
+            <i data-lucide="star" width="13" height="13" style="fill:var(--yellow);stroke:none;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="testi-section">
+    <div class="testi-grid" id="testi-grid">
+      <div class="uiv-card testi-card" onclick="showFull('tekat store','sebuah perusahaan sampingan, no available','Website yang dibuat sangat clean dan profesional. Loading cepat dan mobile-friendly. Sangat direkomendasikan!')">
+        <span class="t-tag">Bot automation</span>
+        <div class="t-quote-ico"><i data-lucide="quote" width="28" height="28"></i></div>
+        <p class="t-text">bot yang dibuat sangat bagus, perusahaan saya jadi mudah buat pilah kostumer saya</p>
+        <div class="t-footer-mini">
+          <div class="t-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--purple));">T</div>
+          <div><div class="t-name">Tekat store</div><div class="t-role">Store, no available</div><div class="t-stars"><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i></div></div>
+        </div>
+      </div>
+      <div class="uiv-card testi-card" onclick="showFull('Siti Nurhaliza','Online Shop Owner','Bot WhatsApp-nya keren! Auto-reply, auto order, semuanya smooth. Customer lebih happy. Worth it!')">
+        <span class="t-tag">Bot WA</span>
+        <div class="t-quote-ico"><i data-lucide="quote" width="28" height="28"></i></div>
+        <p class="t-text">Bot WhatsApp-nya keren! Auto-reply, auto order, semuanya smooth. Customer lebih happy. Worth it!</p>
+        <div class="t-footer-mini">
+          <div class="t-avatar" style="background:linear-gradient(135deg,#25D366,#128C7E);">S</div>
+          <div><div class="t-name">Siti Nurhaliza</div><div class="t-role">Online Shop Owner</div><div class="t-stars"><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i></div></div>
+        </div>
+      </div>
+      <div class="uiv-card testi-card" onclick="showFull('Fadilah Rahman','Content Creator','Hasil editannya jauh di atas ekspektasi! Timing-nya pas banget sama musik. Langsung viral!')">
+        <span class="t-tag">Edit Video</span>
+        <div class="t-quote-ico"><i data-lucide="quote" width="28" height="28"></i></div>
+        <p class="t-text">Hasil editannya jauh di atas ekspektasi! Timing-nya pas banget sama musik. Langsung viral!</p>
+        <div class="t-footer-mini">
+          <div class="t-avatar" style="background:linear-gradient(135deg,var(--pink),#ff8c00);">F</div>
+          <div><div class="t-name">Fadilah Rahman</div><div class="t-role">Content Creator</div><div class="t-stars"><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i></div></div>
+        </div>
+      </div>
+      <div class="uiv-card testi-card" onclick="showFull('Dwi Cahyani','siswi smk, smk ***','Makalah dan PPT-nya rapi dan profesional. Dosen saya sampai nanya siapa yang buat. Terima kasih!')">
+        <span class="t-tag">Office</span>
+        <div class="t-quote-ico"><i data-lucide="quote" width="28" height="28"></i></div>
+        <p class="t-text">Makalah dan PPT-nya rapi dan profesional. guru saya sampai nanya siapa yang buat!</p>
+        <div class="t-footer-mini">
+          <div class="t-avatar" style="background:linear-gradient(135deg,var(--purple),var(--pink));">D</div>
+          <div><div class="t-name">Dwi Cahyani</div><div class="t-role">siswi, smk ***</div><div class="t-stars"><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i></div></div>
+        </div>
+      </div>
+      <div class="uiv-card testi-card" onclick="showFull('Hendri Gunawan','Entrepreneur, Bandung','Landing page bisnis saya sangat premium sekarang. Konversi naik 3x lipat setelah redesign!')">
+        <span class="t-tag">Web Dev</span>
+        <div class="t-quote-ico"><i data-lucide="quote" width="28" height="28"></i></div>
+        <p class="t-text">Landing page bisnis saya sangat premium sekarang. Konversi naik 3x lipat setelah redesign!</p>
+        <div class="t-footer-mini">
+          <div class="t-avatar" style="background:linear-gradient(135deg,var(--cyan),#0080ff);">H</div>
+          <div><div class="t-name">Hendri Gunawan</div><div class="t-role">Entrepreneur, Bandung</div><div class="t-stars"><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i></div></div>
+        </div>
+      </div>
+      <div class="uiv-card testi-card" onclick="showFull('Muhammad Ilham','Admin Komunitas Tech','Bot Telegram-nya bisa custom sesuai kebutuhan. Proses cepat, revisi tanggap, harga bersahabat!')">
+        <span class="t-tag">Bot Telegram</span>
+        <div class="t-quote-ico"><i data-lucide="quote" width="28" height="28"></i></div>
+        <p class="t-text">Bot Telegram-nya bisa custom sesuai kebutuhan. Proses cepat, revisi tanggap, harga bersahabat!</p>
+        <div class="t-footer-mini">
+          <div class="t-avatar" style="background:linear-gradient(135deg,#0088cc,var(--purple));">M</div>
+          <div><div class="t-name">Muhammad Ilham</div><div class="t-role">Admin Komunitas Tech</div><div class="t-stars"><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Review Form (UIverse) -->
+  <div class="review-form">
+    <div class="review-form-inner">
+      <h3><i data-lucide="pencil-line" width="18" height="18"></i> Tulis Testimoni Kamu</h3>
+      <div class="form-group">
+        <label class="form-label">Rating</label>
+        <div class="star-picker" id="star-picker">
+          <button data-v="1"><i data-lucide="star" width="22" height="22"></i></button>
+          <button data-v="2"><i data-lucide="star" width="22" height="22"></i></button>
+          <button data-v="3"><i data-lucide="star" width="22" height="22"></i></button>
+          <button data-v="4"><i data-lucide="star" width="22" height="22"></i></button>
+          <button data-v="5"><i data-lucide="star" width="22" height="22"></i></button>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Nama</label><input type="text" class="uiv-input" id="rev-name" placeholder="Nama kamu"></div>
+      <div class="form-group"><label class="form-label">Testimoni</label><textarea class="uiv-input" id="rev-text" placeholder="Ceritakan pengalamanmu..."></textarea></div>
+      <button class="uiv-btn uiv-btn-cyan" style="width:100%;justify-content:center;margin-top:4px;" onclick="submitReview()">
+        <i data-lucide="send" width="15" height="15"></i> Kirim Testimoni
+      </button>
+    </div>
+  </div>
+
+  <!-- Rating Breakdown -->
+  <section class="rating-section">
+    <div style="text-align:center;margin-bottom:36px;">
+      <div class="section-badge">// Rating Breakdown</div>
+      <h2 class="section-heading" style="margin-top:12px;">Distribusi <span class="gradient-text">Penilaian</span></h2>
+    </div>
+    <div class="rating-wrap">
+      <div class="rating-big">
+        <div class="rating-num-big">4.9</div>
+        <div class="rating-stars-big">
+          <i data-lucide="star" width="22" height="22" style="fill:var(--yellow);stroke:none;"></i>
+          <i data-lucide="star" width="22" height="22" style="fill:var(--yellow);stroke:none;"></i>
+          <i data-lucide="star" width="22" height="22" style="fill:var(--yellow);stroke:none;"></i>
+          <i data-lucide="star" width="22" height="22" style="fill:var(--yellow);stroke:none;"></i>
+          <i data-lucide="star" width="22" height="22" style="fill:var(--yellow);stroke:none;"></i>
+        </div>
+        <div class="rating-count">18+ ulasan</div>
+      </div>
+      <div id="rating-bars">
+        <div class="rbar-row"><div class="rbar-label"><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i> 5</div><div class="rbar-track"><div class="rbar-fill" data-w="88"></div></div><div class="rbar-pct">88%</div></div>
+        <div class="rbar-row"><div class="rbar-label"><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i> 4</div><div class="rbar-track"><div class="rbar-fill" data-w="9"></div></div><div class="rbar-pct">9%</div></div>
+        <div class="rbar-row"><div class="rbar-label"><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i> 3</div><div class="rbar-track"><div class="rbar-fill" data-w="2"></div></div><div class="rbar-pct">2%</div></div>
+        <div class="rbar-row"><div class="rbar-label"><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i> 2</div><div class="rbar-track"><div class="rbar-fill" data-w="1"></div></div><div class="rbar-pct">1%</div></div>
+        <div class="rbar-row"><div class="rbar-label"><i data-lucide="star" width="11" height="11" style="fill:var(--yellow);stroke:none;"></i> 1</div><div class="rbar-track"><div class="rbar-fill" data-w="0"></div></div><div class="rbar-pct">0%</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="cta-strip">
+    <h2>Siap Jadi Klien <span class="gradient-text">Berikutnya?</span></h2>
+    <p>Bergabunglah bersama 29+ klien yang telah puas. Hubungi kami sekarang.</p>
+    <div class="cta-btns">
+      <a href="../store/index.html" class="uiv-btn uiv-btn-cyan"><i data-lucide="shopping-bag" width="15" height="15"></i> Lihat Store</a>
+      <a href="https://wa.me/6283844026828?text=Halo%20danzTech!" target="_blank" class="uiv-btn uiv-btn-wa"><i data-lucide="message-circle" width="15" height="15"></i> WhatsApp</a>
+    </div>
+  </div>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+    lucide.createIcons();
+
+    gsap.set(['.page-hero .section-badge','.page-title','.page-sub','.rating-display','.stats-bar'],{opacity:0,y:28});
+    gsap.to('.page-hero .section-badge',{opacity:1,y:0,duration:.6,delay:.2,ease:'power3.out'});
+    gsap.to('.page-title',{opacity:1,y:0,duration:.8,delay:.35,ease:'power3.out'});
+    gsap.to('.page-sub',{opacity:1,y:0,duration:.7,delay:.5,ease:'power3.out'});
+    gsap.to('.rating-display',{opacity:1,y:0,duration:.6,delay:.65,ease:'power3.out'});
+    gsap.to('.stats-bar',{opacity:1,y:0,duration:.7,delay:.8,ease:'power3.out'});
+    gsap.from('.featured-card',{scrollTrigger:{trigger:'.featured-section',start:'top 85%'},opacity:0,y:50,scale:.95,duration:.9,ease:'power3.out'});
+    gsap.from('.review-form-inner',{scrollTrigger:{trigger:'.review-form',start:'top 85%'},opacity:0,y:40,duration:.8,ease:'power3.out'});
+    gsap.from('.cta-strip',{scrollTrigger:{trigger:'.cta-strip',start:'top 85%'},opacity:0,y:40,duration:.8,ease:'power3.out'});
+
+    // Testi cards (anime.js stagger)
+    new IntersectionObserver(entries=>{
+      entries.forEach(e=>{if(e.isIntersecting){anime({targets:'#testi-grid .testi-card',opacity:[0,1],translateY:[55,0],delay:anime.stagger(90),duration:680,easing:'easeOutExpo'});}});
+    },{threshold:.1}).observe(document.getElementById('testi-grid'));
+
+    // Rating bars
+    new IntersectionObserver(entries=>{
+      entries.forEach(e=>{if(e.isIntersecting){anime({targets:'#rating-bars .rbar-fill',width:el=>el.dataset.w+'%',delay:anime.stagger(75),duration:950,easing:'easeOutQuart'});}});
+    },{threshold:.3}).observe(document.getElementById('rating-bars'));
+
+    // Counters
+    new IntersectionObserver(entries=>{
+      entries.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('[data-target]').forEach(el=>{const t=+el.dataset.target;anime({targets:el,innerHTML:[0,t],round:1,duration:1600,easing:'easeOutExpo',update:a=>el.innerHTML=Math.round(a.animations[0].currentValue)+(t===190||t===285?'+':'%')});});}});
+    },{threshold:.5}).observe(document.getElementById('stats-bar'));
+
+    // Star picker
+    let selectedStar = 0;
+    const starBtns = document.querySelectorAll('#star-picker button');
+    starBtns.forEach((btn, i) => {
+      btn.addEventListener('click', () => {
+        selectedStar = i + 1;
+        starBtns.forEach((b, j) => {
+          b.classList.toggle('active', j <= i);
+          const ico = b.querySelector('[data-lucide]');
+          ico.style.fill = j <= i ? 'var(--yellow)' : 'none';
+          ico.style.stroke = j <= i ? 'var(--yellow)' : 'currentColor';
+        });
+        anime({ targets: btn, scale: [1, 1.4, 1], duration: 380, easing: 'easeOutBack' });
+      });
+    });
+
+    function submitReview() {
+      const name = document.getElementById('rev-name').value.trim();
+      const text = document.getElementById('rev-text').value.trim();
+      if (!selectedStar) { dtToast('Pilih rating terlebih dahulu', 'warning'); return; }
+      if (!name)         { dtToast('Nama tidak boleh kosong', 'warning'); return; }
+      if (!text)         { dtToast('Tulis testimonimu terlebih dahulu', 'warning'); return; }
+      Swal.fire({
+        customClass: { popup: 'dt-swal' }, icon: 'success', title: 'Terima Kasih!',
+        html: `<p><strong>${name}</strong> memberikan rating ${selectedStar}/5</p><p style="color:var(--gray);margin-top:8px">"${text}"</p>`,
+        confirmButtonText: 'Tutup',
+        didClose: () => {
+          document.getElementById('rev-name').value = '';
+          document.getElementById('rev-text').value = '';
+          selectedStar = 0;
+          starBtns.forEach(b => {
+            b.classList.remove('active');
+            const ico = b.querySelector('[data-lucide]');
+            ico.style.fill = 'none'; ico.style.stroke = 'currentColor';
+          });
+        }
+      });
+    }
+
+    function showFull(name, role, text) {
+      Swal.fire({
+        customClass: { popup: 'dt-swal' },
+        html: `<div style="text-align:center">
+          <div style="color:rgba(255,45,120,.4);margin-bottom:12px;display:flex;justify-content:center;">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+          </div>
+          <p style="font-style:italic;line-height:1.8;margin-bottom:18px;">${text}</p>
+          <div style="color:var(--cyan);font-weight:700;">${name}</div>
+          <div style="color:var(--gray);font-size:.78rem;margin-top:3px;">${role}</div>
+        </div>`,
+        showConfirmButton: false, showCloseButton: true
+      });
+    }
+
+    function showStatInfo(title, desc) {
+      dtAlert({ icon: 'info', title, html: `<p>${desc}</p>`, confirmButtonText: 'Oke' });
+    }
+
+    // Floating UI tooltip on featured card
+    window.addEventListener('load', () => {
+      if (!window.FloatingUIDOM) return;
+      const { computePosition, offset, flip, shift } = FloatingUIDOM;
+      const fc = document.querySelector('.featured-card');
+      let tip;
+      fc.addEventListener('mouseenter', async () => {
+        tip = Object.assign(document.createElement('div'), { className: 'dt-tooltip', textContent: 'Klik untuk baca testimoni lengkap' });
+        document.body.appendChild(tip);
+        const { x, y } = await computePosition(fc, tip, { placement: 'top', middleware: [offset(8), flip(), shift({ padding: 6 })] });
+        Object.assign(tip.style, { position: 'absolute', left: x + 'px', top: y + 'px' });
+      });
+      fc.addEventListener('mouseleave', () => { tip?.remove(); tip = null; });
+    });
+  </script>
+</body>
+</html>

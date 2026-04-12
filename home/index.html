@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta property="og:title" content="danzTech - Store">
+  <meta property="og:description" content="Selamat datang di Store resmi danzTech. Lihat produk produk selengkapnya di sini.">
+  <meta property="og:image" content="https://files.catbox.moe/d4to5k.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://danztech.vercel.app/home/index.html">
+  <title>danzTech &ndash; Home</title>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Floating UI -->
+  <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.3/dist/floating-ui.dom.umd.min.js"></script>
+  <!-- Anime.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Shared -->
+  <script src="../shared.js" defer></script>
+  <style>
+    .bg-grid {
+      position:fixed; inset:0; z-index:-2; pointer-events:none;
+      background-image:
+        linear-gradient(rgba(0,245,255,.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,245,255,.022) 1px, transparent 1px);
+      background-size:60px 60px;
+    }
+    .bg-orbs { position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
+    .orb { position:absolute; border-radius:50%; filter:blur(80px); opacity:.09; animation:float 8s ease-in-out infinite; }
+    .orb-1 { width:600px; height:600px; background:var(--cyan); top:-200px; left:-100px; }
+    .orb-2 { width:500px; height:500px; background:var(--purple); bottom:-150px; right:-100px; animation-delay:3s; }
+    .orb-3 { width:350px; height:350px; background:var(--pink); top:40%; left:40%; animation-delay:1.5s; }
+    canvas#particles { position:fixed; inset:0; z-index:-1; pointer-events:none; }
+
+    /* HERO SPLIT LAYOUT */
+    .hero {
+      min-height:100vh; display:flex; align-items:center;
+      padding:calc(var(--nav-h) + 40px) 6% 60px;
+      position:relative; z-index:1;
+    }
+    .hero-split {
+      width:100%; max-width:1200px; margin:0 auto;
+      display:grid; grid-template-columns:1fr 480px;
+      gap:40px; align-items:center;
+    }
+    .hero-left { text-align:left; }
+    .hero-right {
+      display:flex; align-items:center; justify-content:center;
+      position:relative;
+    }
+
+    /* Globe container */
+    .globe-wrap {
+      width:440px; height:440px;
+      position:relative; flex-shrink:0;
+    }
+    #globe-canvas {
+      width:100% !important; height:100% !important;
+      border-radius:50%;
+      opacity:0; transition:opacity 1.6s ease;
+    }
+    #globe-canvas.ready { opacity:1; }
+
+    /* Glow ring behind globe */
+    .globe-wrap::before {
+      content:''; position:absolute; inset:-20px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(0,245,255,0.12) 0%, rgba(168,85,247,0.06) 50%, transparent 70%);
+      animation:float 4s ease-in-out infinite;
+      pointer-events:none;
+    }
+    /* Spinning ring decoration */
+    .globe-wrap::after {
+      content:''; position:absolute; inset:-8px; border-radius:50%;
+      border:1px solid rgba(0,245,255,0.18);
+      border-top-color:rgba(0,245,255,0.6);
+      animation:spin-slow 8s linear infinite;
+      pointer-events:none;
+    }
+
+    /* Hero text (left side) */
+    .hero-badge {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 18px; border:1px solid var(--border);
+      background:rgba(0,245,255,.06); border-radius:50px;
+      font-size:.8rem; color:var(--cyan); margin-bottom:24px;
+      font-family:var(--mono); cursor:pointer; transition:all .3s;
+    }
+    .hero-badge:hover { background:rgba(0,245,255,.12); border-color:rgba(0,245,255,.4); transform:scale(1.03); }
+    .badge-dot { width:7px; height:7px; background:var(--cyan); border-radius:50%; animation:blink 2s infinite; box-shadow:0 0 7px var(--cyan); }
+    .hero-title {
+      font-size:clamp(2.4rem,5vw,4.2rem); font-weight:900;
+      line-height:1.05; letter-spacing:-2px; margin-bottom:20px;
+    }
+    .hero-sub {
+      font-size:clamp(.9rem,1.5vw,1.1rem); color:var(--gray);
+      max-width:480px; margin:0 0 36px; line-height:1.85;
+    }
+    .hero-btns { display:flex; gap:10px; flex-wrap:wrap; }
+
+    .scroll-hint {
+      position:absolute; bottom:28px; left:50%; transform:translateX(-50%);
+      display:flex; flex-direction:column; align-items:center; gap:8px;
+      color:var(--gray); font-size:.7rem; font-family:var(--mono);
+      animation:float 2.5s ease-in-out infinite;
+    }
+    .scroll-line { width:1px; height:46px; background:linear-gradient(var(--cyan),transparent); }
+
+    @media(max-width:900px) {
+      .hero-split { grid-template-columns:1fr; text-align:center; }
+      .hero-left { order:1; }
+      .hero-right { order:2; }
+      .hero-sub { margin:0 auto 36px; }
+      .hero-btns { justify-content:center; }
+      .globe-wrap { width:300px; height:300px; }
+    }
+    @media(max-width:500px) {
+      .globe-wrap { width:240px; height:240px; }
+    }
+
+    /* STATS */
+    .stats-section { padding:80px 5%; }
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:18px; max-width:900px; margin:0 auto; }
+    .stat-card {
+      padding:30px 22px; text-align:center; border-radius:20px;
+      background:linear-gradient(135deg,rgba(12,12,32,.85),rgba(12,12,32,.4));
+      border:1px solid var(--border); transition:all .4s var(--ease);
+      position:relative; overflow:hidden; cursor:pointer;
+    }
+    .stat-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:linear-gradient(90deg,var(--cyan),var(--purple));
+      transform:scaleX(0); transition:transform .4s;
+    }
+    .stat-card:hover::before { transform:scaleX(1); }
+    .stat-card:hover { transform:translateY(-6px); border-color:rgba(0,245,255,.28); box-shadow:0 16px 40px rgba(0,0,0,.4); }
+    .stat-icon { color:var(--cyan); margin-bottom:12px; opacity:.7; }
+    .stat-num {
+      font-size:2.8rem; font-weight:900; display:block;
+      background:linear-gradient(135deg,var(--cyan),var(--purple));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      font-family:var(--mono);
+    }
+    .stat-label { font-size:.8rem; color:var(--gray); margin-top:8px; }
+
+    /* ABOUT */
+    .about-section { padding:100px 5%; }
+    .about-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+    .avatar-wrap { position:relative; width:340px; height:340px; margin:0 auto; }
+    .avatar-ring { position:absolute; inset:-16px; border-radius:40%; background:conic-gradient(var(--cyan),var(--purple),var(--pink),var(--cyan)); animation:spin-slow 6s linear infinite; padding:3px; }
+    .avatar-ring-inner { width:100%; height:100%; border-radius:40%; background:var(--bg); }
+    .avatar-img { position:absolute; inset:0; border-radius:38%; overflow:hidden; }
+    .avatar-img img { width:100%; height:100%; object-fit:cover; }
+    .float-badge {
+      position:absolute; background:var(--glass); border:1px solid var(--border);
+      border-radius:12px; padding:8px 13px; font-size:.76rem;
+      font-family:var(--mono); color:var(--cyan);
+      animation:float 3s ease-in-out infinite; cursor:pointer;
+      backdrop-filter:blur(10px); transition:all .3s;
+      display:flex; align-items:center; gap:6px;
+    }
+    .float-badge:hover { border-color:var(--cyan); background:rgba(0,245,255,.1); }
+    .fb1 { top:8%; left:-20px; animation-delay:0s; }
+    .fb2 { bottom:12%; right:-20px; animation-delay:1.5s; }
+    .fb3 { top:52%; left:-30px; animation-delay:.8s; }
+    .section-label { font-family:var(--mono); font-size:.72rem; letter-spacing:3px; color:var(--cyan); text-transform:uppercase; margin-bottom:12px; }
+    .section-heading { font-size:clamp(2rem,4vw,3rem); font-weight:800; line-height:1.1; letter-spacing:-1px; margin-bottom:20px; }
+    .about-desc { color:var(--gray); line-height:1.85; margin-bottom:12px; }
+    @media(max-width:900px) {
+      .about-inner { grid-template-columns:1fr; gap:50px; text-align:center; }
+      .avatar-wrap { width:260px; height:260px; }
+      .float-badge { display:none; }
+    }
+
+    /* HIGHLIGHTS */
+    .highlights-section { padding:100px 5%; }
+    .section-center { text-align:center; margin-bottom:56px; }
+    .highlights-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:22px; max-width:1100px; margin:0 auto; }
+    .highlight-card { border-radius:22px; overflow:hidden; cursor:pointer; }
+    .card-thumb {
+      height:150px; display:flex; align-items:center; justify-content:center;
+      transition:transform .4s; position:relative; overflow:hidden;
+    }
+    .card-thumb-icon { color:rgba(255,255,255,.7); transition:transform .4s, color .3s; }
+    .highlight-card:hover .card-thumb-icon { transform:scale(1.15); color:#fff; }
+    .ct-p { background:linear-gradient(135deg,rgba(0,245,255,.15),rgba(0,245,255,.03)); }
+    .ct-s { background:linear-gradient(135deg,rgba(168,85,247,.15),rgba(168,85,247,.03)); }
+    .ct-t { background:linear-gradient(135deg,rgba(255,45,120,.15),rgba(255,45,120,.03)); }
+    .card-body { padding:24px; }
+    .card-body h3 { font-size:1.15rem; margin-bottom:10px; }
+    .card-body p { color:var(--gray); font-size:.9rem; line-height:1.65; margin-bottom:20px; }
+    .card-link {
+      color:var(--cyan); text-decoration:none; font-weight:700; font-size:.86rem;
+      display:inline-flex; align-items:center; gap:6px; transition:gap .3s;
+    }
+    .card-link:hover { gap:12px; }
+
+    /* CTA */
+    .cta-section { padding:120px 5%; text-align:center; background:radial-gradient(ellipse at center,rgba(0,245,255,.04) 0%,transparent 70%); }
+    .cta-inner { max-width:700px; margin:0 auto; }
+    .cta-title { font-size:clamp(2rem,4vw,3.5rem); font-weight:900; letter-spacing:-1.5px; margin-bottom:20px; }
+    .cta-sub { color:var(--gray); font-size:1.05rem; margin-bottom:40px; line-height:1.8; }
+
+    /* Scroll top */
+    .scroll-top {
+      position:fixed; bottom:28px; right:28px; width:44px; height:44px;
+      border-radius:50%; background:var(--glass); border:1px solid var(--border);
+      color:var(--cyan); cursor:pointer; display:flex; align-items:center;
+      justify-content:center; opacity:0; transform:translateY(20px);
+      transition:all .3s var(--ease); z-index:500; backdrop-filter:blur(12px);
+    }
+    .scroll-top.show { opacity:1; transform:translateY(0); }
+    .scroll-top:hover { background:rgba(0,245,255,.14); }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <canvas id="particles"></canvas>
+
+  <!-- HERO SPLIT -->
+  <section class="hero">
+    <div class="hero-split">
+      <!-- LEFT: Text -->
+      <div class="hero-left" id="hero-inner">
+        <div class="hero-badge" id="hero-badge" onclick="showAvailable()">
+          <span class="badge-dot"></span>
+          Available for Projects
+        </div>
+        <h1 class="hero-title" id="hero-title">
+          Solusi Kreatif untuk<br>
+          <span class="gradient-text">Bisnis Modern</span> Anda
+        </h1>
+        <p class="hero-sub" id="hero-sub">
+          Kami menggabungkan desain memukau dengan teknologi terkini untuk menciptakan
+          pengalaman digital yang menawan dan tak terlupakan.
+        </p>
+        <div class="hero-btns" id="hero-btns">
+          <a href="../portofolio/index.html" class="uiv-btn uiv-btn-cyan">
+            <i data-lucide="layout-grid" width="16" height="16"></i> Lihat Portofolio
+          </a>
+          <a href="../store/index.html" class="uiv-btn uiv-btn-ghost">
+            <i data-lucide="shopping-bag" width="16" height="16"></i> Store
+          </a>
+          <button class="uiv-btn uiv-btn-ghost" onclick="showContact()">
+            <i data-lucide="phone" width="16" height="16"></i> Hubungi
+          </button>
+        </div>
+      </div>
+      <!-- RIGHT: Globe -->
+      <div class="hero-right">
+        <div class="globe-wrap">
+          <canvas id="globe-canvas"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      scroll
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-section">
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card" onclick="showStat('Pengalaman','3+ tahun menghadirkan solusi digital untuk klien dari berbagai industri.')">
+        <div class="stat-icon"><i data-lucide="calendar" width="22" height="22"></i></div>
+        <span class="stat-num" data-target="3">0</span>
+        <div class="stat-label">Tahun Pengalaman</div>
+      </div>
+      <div class="stat-card" onclick="showStat('Proyek Selesai','7+ proyek telah berhasil diselesaikan dengan kualitas premium.')">
+        <div class="stat-icon"><i data-lucide="folder-check" width="22" height="22"></i></div>
+        <span class="stat-num" data-target="5">0</span>
+        <div class="stat-label">Proyek Selesai</div>
+      </div>
+      <div class="stat-card" onclick="showStat('Klien Puas','11+ klien dari berbagai bidang bisnis telah mempercayakan proyeknya.')">
+        <div class="stat-icon"><i data-lucide="users" width="22" height="22"></i></div>
+        <span class="stat-num" data-target="11">0</span>
+        <div class="stat-label">Klien Puas</div>
+      </div>
+      <div class="stat-card" onclick="showStat('Tingkat Kepuasan','98% klien memberikan rating bintang 5 untuk kualitas layanan kami.')">
+        <div class="stat-icon"><i data-lucide="trending-up" width="22" height="22"></i></div>
+        <span class="stat-num" data-target="98">0</span>
+        <div class="stat-label">% Kepuasan</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about-section">
+    <div class="about-inner">
+      <div id="about-visual">
+        <div class="avatar-wrap">
+          <div class="avatar-ring"><div class="avatar-ring-inner"></div></div>
+          <div class="avatar-img"><img src="https://files.catbox.moe/co20m1.png" alt="MDWA"></div>
+        </div>
+        <div class="float-badge fb1" data-tip="Web Developer &amp; Designer">
+          <i data-lucide="code-2" width="13" height="13"></i> Web Dev
+        </div>
+        <div class="float-badge fb2" data-tip="SMK KBM 1 &mdash; X TKJ 4">
+          <i data-lucide="graduation-cap" width="13" height="13"></i> SMK TKJ
+        </div>
+        <div class="float-badge fb3" data-tip="Tersedia untuk proyek baru">
+          <i data-lucide="zap" width="13" height="13"></i> Open to Work
+        </div>
+      </div>
+      <div id="about-text">
+        <div class="section-label">// Tentang Kami</div>
+        <h2 class="section-heading">Tim Kreatif yang<br><span class="gradient-text">Berdedikasi</span></h2>
+        <p class="about-desc">Kami adalah tim kreatif yang menghadirkan solusi desain dan pengembangan digital inovatif. Dengan pengalaman lebih dari 3+ tahun, kami telah membantu beberapa mahasiswa hingga perusahaan dari berbagai industri.</p>
+        <p class="about-desc">Setiap proyek ditangani dengan pendekatan personal &mdash; memahami kebutuhan unik bisnis Anda dan mewujudkannya menjadi solusi digital yang indah dan berkinerja tinggi.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;">
+          <a href="../portofolio/index.html" class="uiv-btn uiv-btn-cyan">
+            <i data-lucide="arrow-right" width="16" height="16"></i> Lihat Karya
+          </a>
+          <button class="uiv-btn uiv-btn-ghost" onclick="showContact()">
+            <i data-lucide="message-circle" width="16" height="16"></i> Hubungi
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HIGHLIGHTS -->
+  <section class="highlights-section">
+    <div class="section-center">
+      <div class="section-badge">// Layanan Kami</div>
+      <h2 class="section-heading" style="font-size:clamp(1.8rem,4vw,3rem);font-weight:800;letter-spacing:-1px;margin-top:12px;">
+        Apa yang Kami <span class="gradient-text">Tawarkan</span>
+      </h2>
+    </div>
+    <div class="highlights-grid">
+      <div class="uiv-card highlight-card" onclick="location.href='../portofolio/index.html'">
+        <div class="card-thumb ct-p">
+          <i data-lucide="layout-grid" width="56" height="56" class="card-thumb-icon"></i>
+        </div>
+        <div class="card-body">
+          <span class="uiv-badge uiv-badge-cyan" style="margin-bottom:10px;">Portfolio</span>
+          <h3>Portofolio Unggulan</h3>
+          <p>Jelajahi karya terbaik yang mencerminkan komitmen terhadap kualitas dan inovasi.</p>
+          <a href="../portofolio/index.html" class="card-link">
+            Lihat Karya <i data-lucide="arrow-right" width="14" height="14"></i>
+          </a>
+        </div>
+      </div>
+      <div class="uiv-card highlight-card" onclick="location.href='../store/index.html'">
+        <div class="card-thumb ct-s">
+          <i data-lucide="shopping-bag" width="56" height="56" class="card-thumb-icon"></i>
+        </div>
+        <div class="card-body">
+          <span class="uiv-badge uiv-badge-purple" style="margin-bottom:10px;">Store</span>
+          <h3>Produk Digital</h3>
+          <p>Edit video, bot automation, web development, dan berbagai layanan digital lainnya.</p>
+          <a href="../store/index.html" class="card-link">
+            Jelajahi Store <i data-lucide="arrow-right" width="14" height="14"></i>
+          </a>
+        </div>
+      </div>
+      <div class="uiv-card highlight-card" onclick="location.href='../testimoni/index.html'">
+        <div class="card-thumb ct-t">
+          <i data-lucide="star" width="56" height="56" class="card-thumb-icon"></i>
+        </div>
+        <div class="card-body">
+          <span class="uiv-badge uiv-badge-pink" style="margin-bottom:10px;">Testimoni</span>
+          <h3>Testimoni Klien</h3>
+          <p>Dengarkan pengalaman 11+ klien yang puas dengan layanan kami.</p>
+          <a href="../testimoni/index.html" class="card-link">
+            Baca Testimoni <i data-lucide="arrow-right" width="14" height="14"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-inner" id="cta-inner">
+      <div class="section-badge">// Hubungi Kami</div>
+      <h2 class="cta-title">Mari Wujudkan Ide Anda <span class="gradient-text">Bersama</span></h2>
+      <p class="cta-sub">Siap mengambil langkah berikutnya? Konsultasikan proyek Anda dengan kami sekarang!</p>
+      <button class="uiv-btn uiv-btn-wa" style="font-size:1.02rem;padding:14px 34px;" onclick="showContact()">
+        <i data-lucide="message-circle" width="18" height="18"></i> Hubungi Sekarang
+      </button>
+    </div>
+  </section>
+
+  <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <i data-lucide="arrow-up" width="18" height="18"></i>
+  </button>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+    lucide.createIcons();
+
+    // Particles
+    const cv = document.getElementById('particles'), cx = cv.getContext('2d');
+    let W, H, pts = [];
+    const resize = () => { W = cv.width = innerWidth; H = cv.height = innerHeight; };
+    resize(); window.addEventListener('resize', resize);
+    for (let i = 0; i < 65; i++) pts.push({ x: Math.random() * 9999, y: Math.random() * 9999, vx: (Math.random() - .5) * .38, vy: (Math.random() - .5) * .38, r: Math.random() * 1.4 + .3, o: Math.random() * .35 + .05 });
+    (function tick() {
+      cx.clearRect(0, 0, W, H);
+      pts.forEach((p, i) => {
+        p.x = ((p.x + p.vx) % W + W) % W; p.y = ((p.y + p.vy) % H + H) % H;
+        cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, Math.PI * 2); cx.fillStyle = `rgba(0,245,255,${p.o})`; cx.fill();
+        for (let j = i + 1; j < pts.length; j++) { const dx = pts[j].x - p.x, dy = pts[j].y - p.y, d = Math.sqrt(dx * dx + dy * dy); if (d < 110) { cx.beginPath(); cx.strokeStyle = `rgba(0,245,255,${.065 * (1 - d / 110)})`; cx.lineWidth = .5; cx.moveTo(p.x, p.y); cx.lineTo(pts[j].x, pts[j].y); cx.stroke(); } }
+      });
+      requestAnimationFrame(tick);
+    })();
+
+    // GSAP hero entrance
+    gsap.set(['#hero-badge', '#hero-title', '#hero-sub', '#hero-btns'], { opacity: 0, y: 40 });
+    gsap.to('#hero-badge', { opacity: 1, y: 0, duration: .7, delay: .3, ease: 'power3.out' });
+    gsap.to('#hero-title', { opacity: 1, y: 0, duration: .9, delay: .5, ease: 'power3.out' });
+    gsap.to('#hero-sub',   { opacity: 1, y: 0, duration: .7, delay: .75, ease: 'power3.out' });
+    gsap.to('#hero-btns',  { opacity: 1, y: 0, duration: .7, delay: .95, ease: 'power3.out' });
+
+    // GSAP scroll reveals
+    gsap.utils.toArray('.stat-card').forEach((el, i) => gsap.from(el, { scrollTrigger: { trigger: el, start: 'top 86%' }, opacity: 0, y: 50, duration: .7, delay: i * .1, ease: 'power3.out' }));
+    gsap.from('#about-visual', { scrollTrigger: { trigger: '.about-section', start: 'top 70%' }, opacity: 0, x: -60, duration: 1, ease: 'power3.out' });
+    gsap.from('#about-text',   { scrollTrigger: { trigger: '.about-section', start: 'top 70%' }, opacity: 0, x:  60, duration: 1, ease: 'power3.out' });
+    gsap.utils.toArray('.highlight-card').forEach((el, i) => gsap.from(el, { scrollTrigger: { trigger: el, start: 'top 86%' }, opacity: 0, y: 60, duration: .8, delay: i * .14, ease: 'power3.out' }));
+    gsap.from('#cta-inner', { scrollTrigger: { trigger: '.cta-section', start: 'top 80%' }, opacity: 0, y: 50, duration: .9, ease: 'power3.out' });
+
+    // Anime.js counter
+    new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.querySelectorAll('.stat-num').forEach(el => { anime({ targets: el, innerHTML: [0, +el.dataset.target], round: 1, duration: 1800, easing: 'easeOutExpo', update: a => el.innerHTML = Math.round(a.animations[0].currentValue) }); }); });
+    }, { threshold: .5 }).observe(document.getElementById('stats-grid'));
+
+    // Scroll top
+    window.addEventListener('scroll', () => document.getElementById('scrollTop').classList.toggle('show', scrollY > 400));
+
+    // Parallax hero
+    window.addEventListener('scroll', () => { const el = document.getElementById('hero-inner'); if (el) el.style.transform = `translateY(${scrollY * .2}px)`; });
+
+    // ── THREE.JS GLOBE ────────────────────────────────────────
+    (function initGlobe() {
+      const canvas = document.getElementById('globe-canvas');
+      const wrap   = canvas.parentElement; // .globe-wrap
+
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.setClearColor(0x000000, 0);
+
+      const scene  = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+      camera.position.z = 2.8;
+
+      function onResize() {
+        const w = wrap.clientWidth, h = wrap.clientHeight;
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      }
+      onResize();
+      window.addEventListener('resize', onResize);
+
+      const R = 1;
+
+      // Wireframe
+      const wireMat = new THREE.MeshBasicMaterial({ color:0x00f5ff, wireframe:true, transparent:true, opacity:0.08 });
+      const wireMesh = new THREE.Mesh(new THREE.SphereGeometry(R,64,64), wireMat);
+
+      // Base sphere
+      const baseMat = new THREE.MeshPhongMaterial({ color:0x050520, transparent:true, opacity:0.6, shininess:90, specular:new THREE.Color(0x00f5ff) });
+      const baseMesh = new THREE.Mesh(new THREE.SphereGeometry(R,64,64), baseMat);
+
+      // Grid lines helper
+      function addLine(pts, color, opacity) {
+        const g = new THREE.BufferGeometry().setFromPoints(pts);
+        scene.add(new THREE.Line(g, new THREE.LineBasicMaterial({ color, transparent:true, opacity })));
+      }
+
+      // Latitude lines
+      for (let lat = -80; lat <= 80; lat += 20) {
+        const pts=[], phi=(90-lat)*Math.PI/180;
+        for (let lon=0; lon<=360; lon+=3) {
+          const t=lon*Math.PI/180;
+          pts.push(new THREE.Vector3(R*1.001*Math.sin(phi)*Math.cos(t), R*1.001*Math.cos(phi), R*1.001*Math.sin(phi)*Math.sin(t)));
+        }
+        addLine(pts, 0x00f5ff, 0.14);
+      }
+
+      // Longitude lines
+      for (let lon=0; lon<360; lon+=20) {
+        const pts=[], theta=lon*Math.PI/180;
+        for (let lat=-90; lat<=90; lat+=3) {
+          const phi=(90-lat)*Math.PI/180;
+          pts.push(new THREE.Vector3(R*1.001*Math.sin(phi)*Math.cos(theta), R*1.001*Math.cos(phi), R*1.001*Math.sin(phi)*Math.sin(theta)));
+        }
+        addLine(pts, 0xa855f7, 0.1);
+      }
+
+      // City dots
+      const dotGeo = new THREE.SphereGeometry(0.014,8,8);
+      [[51.5,-0.1],[40.7,-74],[-6.2,106.8],[35.7,139.7],[48.8,2.35],
+       [55.75,37.6],[1.3,103.8],[-33.9,151.2],[28.6,77.2],[31.2,121.5],
+       [37.6,126.9],[-23.5,-46.6],[30,31.2],[-26,28],[19.4,-99.1]
+      ].forEach(([la,lo]) => {
+        const phi=(90-la)*Math.PI/180, theta=lo*Math.PI/180;
+        const m = new THREE.MeshBasicMaterial({ color:Math.random()>.5?0x00f5ff:0xa855f7, transparent:true, opacity:.95 });
+        const d = new THREE.Mesh(dotGeo, m);
+        d.position.set(R*1.015*Math.sin(phi)*Math.cos(theta), R*1.015*Math.cos(phi), R*1.015*Math.sin(phi)*Math.sin(theta));
+        scene.add(d);
+      });
+
+      // Arc helper
+      function arc(la1,lo1,la2,lo2,col) {
+        const toV=(la,lo)=>{const phi=(90-la)*Math.PI/180,theta=lo*Math.PI/180;return new THREE.Vector3(Math.sin(phi)*Math.cos(theta),Math.cos(phi),Math.sin(phi)*Math.sin(theta));};
+        const v1=toV(la1,lo1),v2=toV(la2,lo2);
+        const mid=v1.clone().add(v2).multiplyScalar(.5).normalize().multiplyScalar(R*1.28);
+        const pts=[];
+        for(let t=0;t<=1;t+=0.02){const p=new THREE.Vector3().lerpVectors(v1,v2,t);const mp=new THREE.Vector3().lerpVectors(p,mid,Math.sin(t*Math.PI)*.5);pts.push(mp.normalize().multiplyScalar(R*1.018));}
+        addLine(pts,col,0.4);
+      }
+      arc(51.5,-0.1, 40.7,-74,    0x00f5ff);
+      arc(-6.2,106.8, 35.7,139.7, 0xa855f7);
+      arc(48.8,2.35, 55.75,37.6,  0x00f5ff);
+      arc(1.3,103.8, 31.2,121.5,  0xff2d78);
+      arc(40.7,-74, -23.5,-46.6,  0xa855f7);
+      arc(37.6,126.9, 28.6,77.2,  0x00f5ff);
+      arc(-33.9,151.2, 1.3,103.8, 0xff2d78);
+
+      // Atmosphere
+      const atmoMat = new THREE.MeshBasicMaterial({ color:0x00f5ff, transparent:true, opacity:0.045, side:THREE.BackSide });
+      scene.add(new THREE.Mesh(new THREE.SphereGeometry(R*1.15,32,32), atmoMat));
+
+      // Lights
+      scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+      const dl = new THREE.DirectionalLight(0x00f5ff, 0.9); dl.position.set(3,2,3); scene.add(dl);
+      const pl = new THREE.PointLight(0xa855f7, 0.7, 6); pl.position.set(-2,-1,2); scene.add(pl);
+
+      // Group
+      const globe = new THREE.Group();
+      [wireMesh, baseMesh].forEach(m => globe.add(m));
+      scene.add(globe);
+
+      // Mouse — relative to globe container
+      let targetRotX=0, targetRotY=0, autoAngle=0;
+      let lastMove=0, autoRotate=true;
+
+      window.addEventListener('mousemove', e => {
+        const rect = wrap.getBoundingClientRect();
+        // normalize relative to full window for smooth tracking
+        const mx = (e.clientX/innerWidth - 0.5) * 2;
+        const my = (e.clientY/innerHeight - 0.5) * 2;
+        targetRotX = my * 0.7;
+        targetRotY = mx * 1.1;
+        lastMove = Date.now();
+        autoRotate = false;
+      });
+
+      // Animate
+      (function tick() {
+        requestAnimationFrame(tick);
+        if (!autoRotate && Date.now()-lastMove > 2200) autoRotate = true;
+        if (autoRotate) {
+          autoAngle += 0.004;
+          targetRotY = autoAngle;
+          targetRotX += (0 - targetRotX) * 0.025;
+        }
+        globe.rotation.y += (targetRotY - globe.rotation.y) * 0.055;
+        globe.rotation.x += (targetRotX - globe.rotation.x) * 0.055;
+        atmoMat.opacity = 0.035 + Math.sin(Date.now()*.001) * 0.018;
+        renderer.render(scene, camera);
+      })();
+
+      setTimeout(() => canvas.classList.add('ready'), 300);
+    })();
+    // ─────────────────────────────────────────────────────────
+
+    // Floating UI on float badges
+    window.addEventListener('load', () => {
+      if (!window.FloatingUIDOM || window.innerWidth < 769) return;
+      const { computePosition, offset, flip, shift } = FloatingUIDOM;
+      document.querySelectorAll('.float-badge[data-tip]').forEach(el => {
+        let tip;
+        el.addEventListener('mouseenter', async () => {
+          tip = Object.assign(document.createElement('div'), { className: 'dt-tooltip', textContent: el.dataset.tip });
+          document.body.appendChild(tip);
+          const { x, y } = await computePosition(el, tip, { placement: 'right', middleware: [offset(8), flip(), shift({ padding: 6 })] });
+          Object.assign(tip.style, { position: 'absolute', left: x + 'px', top: y + 'px' });
+        });
+        el.addEventListener('mouseleave', () => { tip?.remove(); tip = null; });
+      });
+    });
+
+    // SweetAlert2
+    function showAvailable() {
+      Swal.fire({
+        customClass: { popup: 'dt-swal' }, icon: 'success',
+        title: 'Open for Projects',
+        html: `<p style="margin-bottom:18px">Siap menerima proyek baru. Hubungi melalui salah satu platform berikut.</p>
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+            <a href="https://wa.me/6283844026828" target="_blank" style="padding:9px 20px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;border-radius:50px;text-decoration:none;font-weight:700;font-size:.84rem;">WhatsApp</a>
+            <a href="https://t.me/danzinc" target="_blank" style="padding:9px 20px;background:rgba(255,255,255,.07);color:#f0f0ff;border:1px solid rgba(0,245,255,.2);border-radius:50px;text-decoration:none;font-size:.84rem;">Telegram</a>
+          </div>`,
+        showConfirmButton: false, showCloseButton: true
+      });
+    }
+
+    function showStat(title, desc) {
+      dtAlert({ icon: 'info', title, html: `<p>${desc}</p>`, confirmButtonText: 'Oke' });
+    }
+
+    function showContact() {
+      Swal.fire({
+        customClass: { popup: 'dt-swal' }, title: 'Hubungi Kami',
+        html: `<div style="display:grid;gap:10px;margin-top:8px;">
+          <a href="https://wa.me/6283844026828?text=Halo%20danzTech!" target="_blank" style="display:flex;align-items:center;gap:12px;padding:13px 17px;background:linear-gradient(135deg,rgba(37,211,102,.14),rgba(18,140,126,.14));border:1px solid rgba(37,211,102,.28);border-radius:13px;text-decoration:none;color:#f0f0ff;font-weight:600;font-size:.88rem;transition:all .2s;" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform=''">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            <div><div>WhatsApp</div><small style="color:#7070a0;font-weight:400">+62 838-4402-6828</small></div>
+          </a>
+          <a href="https://t.me/danzinc" target="_blank" style="display:flex;align-items:center;gap:12px;padding:13px 17px;background:rgba(0,245,255,.05);border:1px solid var(--border);border-radius:13px;text-decoration:none;color:#f0f0ff;font-weight:600;font-size:.88rem;transition:all .2s;" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform=''">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            <div><div>Telegram</div><small style="color:#7070a0;font-weight:400">@danzinc</small></div>
+          </a>
+          <a href="mailto:danzTECH0920@gmail.com" style="display:flex;align-items:center;gap:12px;padding:13px 17px;background:rgba(168,85,247,.05);border:1px solid rgba(168,85,247,.18);border-radius:13px;text-decoration:none;color:#f0f0ff;font-weight:600;font-size:.88rem;transition:all .2s;" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform=''">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <div><div>Email</div><small style="color:#7070a0;font-weight:400">whiledanz3012@gmail.com</small></div>
+          </a>
+        </div>`,
+        showConfirmButton: false, showCloseButton: true
+      });
+    }
+  </script>
+</body>
+</html>
