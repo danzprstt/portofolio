@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="id" itemscope itemtype="https://schema.org/WebApplication">
+<head>
+    <!-- 1. META TAG UTAMA & RESPONSIVITAS -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#090a0f">
+    
+    <!-- 2. SEO META TAG STANDAR -->
+    <title>API Project Progress Dashboard - DanzTech</title>
+    <meta name="description" content="Sistem pemantauan real-time perkembangan fitu, rilis, integrasi endpoint, dan metrik stabilitas sistem API DanzTech secara transparan dan teratur.">
+    <meta name="keywords" content="API progress, dashboard API, DanzTech, integrasi API, tracking project, payment gateway core, secure auth JWT, bot automation">
+    <meta name="author" content="DanzTech Development Team">
+    <meta name="copyright" content="© 2026 DanzTech">
+    
+    <!-- 3. OPEN GRAPH META TAG (Facebook, WhatsApp, Discord, LinkedIn) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://api.danztech.id/dashboard">
+    <meta property="og:title" content="API Project Progress Dashboard - DanzTech">
+    <meta property="og:description" content="Pantau status pengembangan sistem backend DanzTech. Cek rilis JWT Auth, Webhook Payment Gateway, dan otomatisasi bot secara real-time.">
+    <meta property="og:image" content="https://api.danztech.id/assets/images/dashboard-preview.jpg">
+    <meta property="og:image:alt" content="Pratinjau Antarmuka API Project Progress Dashboard DanzTech dengan Grafik Tren dan Status Fitur">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="DanzTech API Center">
+    <meta property="og:locale" content="id_ID">
+
+    <!-- 4. TWITTER CARDS META TAG -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@danztech_id">
+    <meta name="twitter:creator" content="@danztech_dev">
+    <meta name="twitter:title" content="API Project Progress Dashboard - DanzTech">
+    <meta name="twitter:description" content="Pantau status pengembangan sistem backend DanzTech. Cek rilis JWT Auth, Webhook Payment Gateway, dan otomatisasi bot secara real-time.">
+    <meta name="twitter:image" content="https://api.danztech.id/assets/images/dashboard-preview.jpg">
+    <meta name="twitter:image:alt" content="Pratinjau Antarmuka API Project Progress Dashboard DanzTech">
+
+    <!-- 5. SCHEMA.ORG METADATA (Google Rich Snippets / Structured Data) -->
+    <meta itemprop="name" content="API Project Progress Dashboard - DanzTech">
+    <meta itemprop="description" content="Sistem pemantauan real-time perkembangan fitur, rilis, integrasi endpoint, dan metrik stabilitas sistem API DanzTech.">
+    <meta itemprop="image" content="https://api.danztech.id/assets/images/dashboard-preview.jpg">
+
+    <!-- 6. EXTERNAL RESOURCES (Fonts & Framework Icons) -->
+    <link rel="canonical" href="https://api.danztech.id/dashboard">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        :root {
+            /* Palette Hitam Bergradasi Elegan (Deep Space Theme) */
+            --bg-base: #090a0f;
+            --bg-gradient: linear-gradient(180deg, #0f111a 0%, #07080c 100%);
+            --panel-bg: #131622;
+            --card-bg: #1a1e2e;
+            
+            /* Warna Aksen */
+            --accent-blue: #00a3ff;
+            --accent-glow: rgba(0, 163, 255, 0.15);
+            --text-main: #f4f4f6;
+            --text-muted: #8e93a6;
+            --border-color: #22273d;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            background-image: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* CONTAINER UTAMA */
+        .dashboard-container {
+            position: relative;
+            width: 100%;
+            max-width: 1060px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        header { text-align: center; margin-bottom: 30px; }
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+        header h1 i { color: var(--accent-blue); margin-right: 10px; }
+        header p { color: var(--text-muted); font-size: 0.95rem; }
+
+        /* Progress Panel */
+        .progress-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .progress-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .progress-info span { display: flex; align-items: center; gap: 8px; }
+        .progress-percent { color: var(--accent-blue); font-size: 1.3rem; font-weight: 700; }
+        .progress-bar-outer { width: 100%; height: 10px; background: var(--bg-base); border-radius: 10px; overflow: hidden; }
+        .progress-bar-inner {
+            height: 100%; width: 0%;
+            background: var(--accent-blue);
+            border-radius: 10px;
+            transition: width 1.5s cubic-bezier(0.1, 1, 0.1, 1);
+        }
+
+        /* Navigasi Filter Konten */
+        .filter-wrapper { display: flex; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; }
+        .filter-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        .filter-btn:hover {
+            color: #ffffff;
+            border-color: #3b4366;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .filter-btn:active {
+            transform: scale(0.96);
+        }
+        .filter-btn.active {
+            background: var(--accent-blue);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+
+        /* Tata Letak Konten */
+        .content-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 25px; }
+        @media (max-width: 850px) { .content-grid { grid-template-columns: 1fr; } }
+
+        .section-title { font-size: 1.15rem; margin-bottom: 16px; color: #ffffff; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .section-title i { color: var(--accent-blue); font-size: 1rem; }
+        .cards-stack { display: flex; flex-direction: column; gap: 14px; }
+
+        /* Kartu Fitur dengan Animasi Ringan */
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 18px;
+            transition: border-color 0.2s ease, transform 0.2s ease, opacity 0.3s ease;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .feature-card:hover { 
+            border-color: #3b4366; 
+            transform: translateY(-2px);
+        }
+        .feature-card.hidden { 
+            display: none; 
+            opacity: 0;
+            transform: translateY(12px);
+        }
+        
+        .feature-card.reveal-animation {
+            animation: smoothFadeUp 0.35s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes smoothFadeUp {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .card-title { font-weight: 600; color: #ffffff; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+        .card-title i { color: var(--text-muted); font-size: 0.9rem; }
+        .card-body { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; padding-left: 24px; }
+
+        /* Badge Status */
+        .badge { padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; gap: 4px; }
+        .badge-ready { background: rgba(16, 185, 129, 0.08); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.15); }
+        .badge-ready::before { content: ""; width: 5px; height: 5px; background: #10b981; border-radius: 50%; }
+        .badge-progress { background: rgba(245, 158, 11, 0.08); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.15); }
+        .badge-progress::before { content: ""; width: 5px; height: 5px; background: #f59e0b; border-radius: 50%; }
+        .badge-planned { background: rgba(142, 147, 166, 0.08); color: var(--text-muted); border: 1px solid rgba(142, 147, 166, 0.15); }
+        .badge-planned::before { content: ""; width: 5px; height: 5px; background: var(--text-muted); border-radius: 50%; }
+
+        /* Area Grafik */
+        .chart-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px;
+            position: relative;
+        }
+        .chart-tooltip {
+            position: absolute;
+            background: var(--bg-base);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #ffffff;
+            font-size: 0.75rem;
+            pointer-events: none;
+            opacity: 0;
+            transform: translate(-50%, -105%);
+            transition: opacity 0.15s ease;
+            z-index: 10;
+            width: max-content;
+        }
+        .chart-tooltip.visible { opacity: 1; }
+        .tooltip-week { font-weight: 700; color: var(--accent-blue); }
+
+        .chart-dot { cursor: pointer; transition: r 0.2s ease; }
+        .chart-dot:hover { r: 6; fill: #ffffff !important; }
+        .chart-label { font-size: 10px; fill: var(--text-muted); }
+        .chart-value { font-size: 10px; fill: #ffffff; opacity: 0.7; }
+
+        footer { margin-top: 35px; text-align: center; font-size: 0.8rem; color: #4b5063; border-top: 1px solid var(--border-color); padding-top: 18px; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <header>
+            <h1><i class="fa-solid fa-layer-group"></i>API Project Progress</h1>
+            <p>Sistem Pemantauan Pengembangan Fitur & Integrasi Layanan API DanzTech</p>
+        </header>
+
+        <div class="progress-panel">
+            <div class="progress-info">
+                <span><i class="fa-solid fa-chart-pie"></i> Total Estimasi Penyelesaian Sistem</span>
+                <span class="progress-percent" id="progressCounter">0%</span>
+            </div>
+            <div class="progress-bar-outer">
+                <div class="progress-bar-inner" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="filter-wrapper">
+            <button class="filter-btn active" onclick="filterCards('all', this)"><i class="fa-solid fa-list"></i> Semua Fitur</button>
+            <button class="filter-btn" onclick="filterCards('ready', this)"><i class="fa-solid fa-circle-check"></i> Siap Rilis</button>
+            <button class="filter-btn" onclick="filterCards('progress', this)"><i class="fa-solid fa-spinner fa-spin-skew"></i> Dalam Proses</button>
+            <button class="filter-btn" onclick="filterCards('planned', this)"><i class="fa-solid fa-calendar-days"></i> Direncanakan</button>
+        </div>
+
+        <div class="content-grid">
+            <div class="features-wrapper">
+                <h2 class="section-title"><i class="fa-solid fa-cubes"></i> Detail Fitur & Rilis</h2>
+                <div class="cards-stack" id="cardsStack">
+                    <div class="feature-card" data-status="ready">
+                        <div class="card-top">
+                            <span class="card-title"><i class="fa-solid fa-shield-halved"></i> Secure Auth System (JWT)</span>
+                            <span class="badge badge-ready">Siap Rilis</span>
+                        </div>
+                        <p class="card-body">Sistem autentikasi enkripsi token end-to-end berkemampuan tinggi guna mengamankan akses data API utama dari modifikasi eksternal.</p>
+                    </div>
+                    <div class="feature-card" data-status="ready">
+                        <div class="card-top">
+                            <span class="card-title"><i class="fa-solid fa-robot"></i> Bot Automation Endpoint</span>
+                            <span class="badge badge-ready">Siap Rilis</span>
+                        </div>
+                        <p class="card-body">Core endpoint untuk kebutuhan otomatisasi pesanan, sinkronisasi produk instan, serta manajemen transaksi store terpusat.</p>
+                    </div>
+                    <div class="feature-card" data-status="progress">
+                        <div class="card-top">
+                            <span class="card-title"><i class="fa-solid fa-credit-card"></i> Payment Gateway Core Integration</span>
+                            <span class="badge badge-progress">Dalam Proses</span>
+                        </div>
+                        <p class="card-body">Modul webhook instan untuk validasi mutasi saldo otomatis antar-bank dan e-wallet yang disesuaikan untuk klien DanzTech.</p>
+                    </div>
+                    <div class="feature-card" data-status="planned">
+                        <div class="card-top">
+                            <span class="card-title"><i class="fa-solid fa-chart-line"></i> Analytics & Logging Dashboard API</span>
+                            <span class="badge badge-planned">Direncanakan</span>
+                        </div>
+                        <p class="card-body">Pencatatan metrik performa server, monitoring rate-limit hit harian, dan sistem visualisasi penggunaan kuota kuantitas request user.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-wrapper">
+                <h2 class="section-title"><i class="fa-solid fa-chart-area"></i> Tren Pengembangan</h2>
+                <div class="chart-box" id="chartBox">
+                    <div class="chart-tooltip" id="chartTooltip">
+                        <div class="tooltip-week" id="tooltipWeek">Minggu 1</div>
+                        <div class="tooltip-detail" id="tooltipDetail">Detail info proyek...</div>
+                    </div>
+
+                    <div class="chart-container">
+                        <svg width="100%" height="220" viewBox="0 0 320 220" id="svgChart" preserveAspectRatio="xMidYMid meet">
+                            <line x1="40" y1="30" x2="300" y2="30" stroke="#1f2438" stroke-width="1" />
+                            <line x1="40" y1="80" x2="300" y2="80" stroke="#1f2438" stroke-width="1" />
+                            <line x1="40" y1="130" x2="300" y2="130" stroke="#1f2438" stroke-width="1" />
+                            <line x1="40" y1="170" x2="300" y2="170" stroke="#2a304d" stroke-width="1" />
+                            
+                            <path d="M 40 170 L 40 140 L 105 110 L 170 90 L 235 60 L 300 45 L 300 170 Z" fill="var(--accent-blue)" opacity="0.06" />
+                            <path d="M 40 140 L 105 110 L 170 90 L 235 60 L 300 45" fill="none" stroke="var(--accent-blue)" stroke-width="2.5" stroke-linecap="round" />
+                            
+                            <circle class="chart-dot" cx="40" cy="140" r="3.5" fill="var(--accent-blue)" data-wk="Minggu 1" data-info="Inisiasi database & modul JWT selesai." />
+                            <circle class="chart-dot" cx="105" cy="110" r="3.5" fill="var(--accent-blue)" data-wk="Minggu 2" data-info="Endpoint otomatisasi teruji sukses." />
+                            <circle class="chart-dot" cx="170" cy="90" r="3.5" fill="var(--accent-blue)" data-wk="Minggu 3" data-info="Modul payment gateway berjalan 50%." />
+                            <circle class="chart-dot" cx="235" cy="60" r="3.5" fill="var(--accent-blue)" data-wk="Minggu 4" data-info="Optimalisasi server & perbaikan response time." />
+                            <circle class="chart-dot" cx="300" cy="45" r="3.5" fill="var(--accent-blue)" data-wk="Kini" data-info="Sistem menyentuh stabilitas rilis 75%." />
+
+                            <text x="40" y="125" class="chart-value" text-anchor="middle">20%</text>
+                            <text x="105" y="95" class="chart-value" text-anchor="middle">45%</text>
+                            <text x="170" y="75" class="chart-value" text-anchor="middle">55%</text>
+                            <text x="235" y="45" class="chart-value" text-anchor="middle">68%</text>
+                            <text x="300" y="30" class="chart-value" text-anchor="middle">75%</text>
+                            
+                            <text x="40" y="195" class="chart-label" text-anchor="middle">Wk 1</text>
+                            <text x="105" y="195" class="chart-label" text-anchor="middle">Wk 2</text>
+                            <text x="170" y="195" class="chart-label" text-anchor="middle">Wk 3</text>
+                            <text x="235" y="195" class="chart-label" text-anchor="middle">Wk 4</text>
+                            <text x="300" y="195" class="chart-label" text-anchor="middle">Kini</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            &copy; 2026 DanzTech API System Dashboard &bull; Production Ready v13
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const targetPercent = 75;
+            const counterElement = document.getElementById("progressCounter");
+            const barElement = document.getElementById("progressBar");
+            let currentPercent = 0;
+            
+            const updateCounter = () => {
+                if(currentPercent < targetPercent) {
+                    currentPercent++;
+                    counterElement.innerText = currentPercent + "%";
+                    setTimeout(updateCounter, 12);
+                }
+            };
+            barElement.style.width = targetPercent + "%";
+            updateCounter();
+            triggerCardAnimations();
+        });
+
+        function triggerCardAnimations() {
+            const visibleCards = document.querySelectorAll('.feature-card:not(.hidden)');
+            visibleCards.forEach((card, index) => {
+                card.classList.remove('reveal-animation');
+                void card.offsetWidth; 
+                card.style.animationDelay = `${index * 40}ms`; 
+                card.classList.add('reveal-animation');
+            });
+        }
+
+        function filterCards(status, element) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            
+            document.querySelectorAll('.feature-card').forEach(card => {
+                if (status === 'all' || card.getAttribute('data-status') === status) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                    card.classList.remove('reveal-animation');
+                }
+            });
+            triggerCardAnimations();
+        }
+
+        const chartBox = document.getElementById('chartBox');
+        const tooltip = document.getElementById('chartTooltip');
+        const tooltipWeek = document.getElementById('tooltipWeek');
+        const tooltipDetail = document.getElementById('tooltipDetail');
+
+        document.querySelectorAll('.chart-dot').forEach(dot => {
+            dot.addEventListener('mouseenter', () => {
+                tooltipWeek.innerText = dot.getAttribute('data-wk');
+                tooltipDetail.innerText = dot.getAttribute('data-info');
+                
+                const boxRect = chartBox.getBoundingClientRect();
+                const dotRect = dot.getBoundingClientRect();
+                
+                tooltip.style.left = (dotRect.left - boxRect.left + (dotRect.width / 2)) + 'px';
+                tooltip.style.top = (dotRect.top - boxRect.top) + 'px';
+                tooltip.classList.add('visible');
+            });
+
+            dot.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('visible');
+            });
+        });
+    </script>
+</body>
+</html>
